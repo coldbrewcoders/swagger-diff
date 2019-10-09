@@ -42,21 +42,26 @@ namespace SwaggerDiff.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutSwaggerItem(long id, SwaggerItem swaggerItem)
     {
-      if (id != swaggerItem.Id) return BadRequest();
+      // Check if swaggerItem is a valid SwaggerItem model
+      if (ModelState.IsValid) return BadRequest();
 
-      _context.Entry(swaggerItem).State = EntityState.Modified;
+      // Find the swaggerItem from SwaggerItems context (returns null by default)
+      var item = await _context.SwaggerItems.FirstOrDefaultAsync(s => s.Id == id);
+
+      if (item != null)
+      {
+        item.ServiceName = swaggerItem.ServiceName;
+        item.ServiceJSON = swaggerItem.ServiceJSON;
+      }
 
       try
       {
+        // Update the DB with in memory context DB changes
         await _context.SaveChangesAsync();
       }
-      catch (DbUpdateConcurrencyException)
+      catch (DbUpdateConcurrencyException ex)
       {
-        if (!SwaggerItemExists(id)) {
-          return NotFound();
-        } else {
-          throw;
-        }
+        return BadRequest(ex.Message);
       }
 
       return NoContent();
@@ -68,7 +73,7 @@ namespace SwaggerDiff.Controllers
     [HttpPost]
     public async Task<ActionResult<SwaggerItem>> PostSwaggerItem(SwaggerItem swaggerItem)
     {
-      _context.SwaggerItems.Add(swaggerItem);
+      await _context.SwaggerItems.AddAsync(swaggerItem);
 
       await _context.SaveChangesAsync();
 
@@ -86,12 +91,7 @@ namespace SwaggerDiff.Controllers
       _context.SwaggerItems.Remove(swaggerItem);
       await _context.SaveChangesAsync();
 
-      return swaggerItem;
-    }
-
-    private bool SwaggerItemExists(long id)
-    {
-      return _context.SwaggerItems.Any(e => e.Id == id);
+      return Ok();
     }
   }
 }
