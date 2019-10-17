@@ -30,7 +30,7 @@ namespace SwaggerDiff
       services.AddControllers();
 
       // Register swagger service to run
-      services.AddSingleton<SwaggerService>(); // TODO: Learn difference between AddSingleton, AddTransient, (one other)
+      services.AddScoped<ISwaggerService, SwaggerService>(); // TODO: Learn difference between AddSingleton, AddTransient, (one other)
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +50,7 @@ namespace SwaggerDiff
       app.UseEndpoints(endpoints => endpoints.MapControllers());
 
       // Blocking task to get all the swagger JSONs
-      app.ApplicationServices.GetRequiredService<SwaggerService>().Execute();
+      app.ApplicationServices.GetService<ISwaggerService>().Execute();
     }
   }
 }
