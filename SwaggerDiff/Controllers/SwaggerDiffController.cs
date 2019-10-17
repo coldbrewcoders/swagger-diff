@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using SwaggerDiff.Models;
 
 namespace SwaggerDiff.Controllers
@@ -29,7 +29,7 @@ namespace SwaggerDiff.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<SwaggerItem>> GetSwaggerItem(long id)
     {
-      var swaggerItem = await _context.SwaggerItems.FindAsync(id);
+      SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(id);
 
       if (swaggerItem == null) return NotFound();
 
@@ -37,8 +37,6 @@ namespace SwaggerDiff.Controllers
     }
 
     // PUT: api/swaggerdiff/5
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-    // more details see https://aka.ms/RazorPagesCRUD.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutSwaggerItem(long id, SwaggerItem swaggerItem)
     {
@@ -46,7 +44,7 @@ namespace SwaggerDiff.Controllers
       if (ModelState.IsValid) return BadRequest();
 
       // Find the swaggerItem from SwaggerItems context (returns null by default)
-      var item = await _context.SwaggerItems.FirstOrDefaultAsync(s => s.Id == id);
+      SwaggerItem item = await _context.SwaggerItems.FirstOrDefaultAsync(s => s.Id == id);
 
       if (item != null)
       {
@@ -68,8 +66,6 @@ namespace SwaggerDiff.Controllers
     }
 
     // POST: api/swaggerdiff
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-    // more details see https://aka.ms/RazorPagesCRUD.
     [HttpPost]
     public async Task<ActionResult<SwaggerItem>> PostSwaggerItem(SwaggerItem swaggerItem)
     {
@@ -84,7 +80,7 @@ namespace SwaggerDiff.Controllers
     [HttpDelete("{id}")]
     public async Task<ActionResult<SwaggerItem>> DeleteSwaggerItem(long id)
     {
-      var swaggerItem = await _context.SwaggerItems.FindAsync(id);
+      SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(id);
 
       if (swaggerItem == null) return NotFound();
 

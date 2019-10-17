@@ -4,7 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+
 using SwaggerDiff.Models;
+using SwaggerDiff.Services;
+using System.Threading.Tasks;
 
 namespace SwaggerDiff
 {
@@ -20,8 +23,14 @@ namespace SwaggerDiff
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      // Add in-memory DB context
       services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"));
+      
+      // Add SwaggerDiff controllers
       services.AddControllers();
+
+      // Register swagger service to run
+      services.AddSingleton<SwaggerService>(); // TODO: Learn difference between AddSingleton, AddTransient, (one other)
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +48,9 @@ namespace SwaggerDiff
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+      // Blocking task to get all the swagger JSONs
+      app.ApplicationServices.GetRequiredService<SwaggerService>().Execute();
     }
   }
 }
