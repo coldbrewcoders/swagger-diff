@@ -6,7 +6,7 @@ using SwaggerDiff.Models;
 
 namespace SwaggerDiff.Services
 {
-  public class SwaggerService
+    public class SwaggerService : ISwaggerService
     {
         private readonly SwaggerDiffContext _context;
         private readonly ILogger _logger;
@@ -17,7 +17,7 @@ namespace SwaggerDiff.Services
             _context = context;
         }
 
-        public void Execute()
+        public void Initialize()
         {
             _logger.LogInformation("Hello from Swagger Service");
 
