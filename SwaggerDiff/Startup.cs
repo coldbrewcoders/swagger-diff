@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
-using System.Threading.Tasks;
 
 namespace SwaggerDiff
 {
@@ -24,13 +23,14 @@ namespace SwaggerDiff
     public void ConfigureServices(IServiceCollection services)
     {
       // Add in-memory DB context
-      services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"));
+      services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"), ServiceLifetime.Singleton);
       
       // Add SwaggerDiff controllers
       services.AddControllers();
 
       // Register swagger service to run
-      services.AddSingleton<SwaggerService>(); // TODO: Learn difference between AddSingleton, AddTransient, (one other)
+      services.AddSingleton<ISwaggerService, SwaggerService>(); 
+      // TODO: Learn difference between AddSingleton, AddTransient, (one other)
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +50,7 @@ namespace SwaggerDiff
       app.UseEndpoints(endpoints => endpoints.MapControllers());
 
       // Blocking task to get all the swagger JSONs
-      app.ApplicationServices.GetRequiredService<SwaggerService>().Execute();
+      app.ApplicationServices.GetService<ISwaggerService>().Initialize();
     }
   }
 }
