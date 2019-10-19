@@ -25,9 +25,6 @@ namespace SwaggerDiff
         {
             // Add in-memory DB context
             services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"), ServiceLifetime.Singleton);
-            
-            // Add logging
-            services.AddSingleton<ILogger, >
 
             // Add SwaggerDiff controllers
             services.AddControllers();
