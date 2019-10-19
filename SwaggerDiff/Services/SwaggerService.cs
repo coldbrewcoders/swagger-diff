@@ -19,13 +19,38 @@ namespace SwaggerDiff.Services
 
         public void Initialize()
         {
-            _logger.LogInformation("Hello from Swagger Service");
+            _logger.LogInformation("Fetching JSON for each service...");
 
+            // Create list to store all swagger items
             List<SwaggerItem> swaggerItems = _context.SwaggerItems.ToList();
 
-            _logger.LogInformation(swaggerItems.ToString());
-        
-            // TODO: Execute the HTTP requests and add them to the in-memory DB
+            // Create instance of SwaggerServiceUrlManager
+            SwaggerServiceUrlManager urlManager = new SwaggerServiceUrlManager();
+
+            _logger.LogInformation("Fetching JSON for services...");
+
+            // Iterate over service list
+            foreach(string serviceName in urlManager.ServiceNames) {
+
+                // Find the JSON url for the service
+                string requestUrl = urlManager.GetUrl(serviceName);
+
+                _logger.LogInformation($"{serviceName}: {requestUrl}");
+
+                // TODO: Make Sync request to get the swagger JSON document
+
+                // TODO: Save JSON instead of URL
+                SwaggerItem newEntry = new SwaggerItem(serviceName, requestUrl);
+
+                swaggerItems.Add(newEntry);
+            }
+
+            _logger.LogInformation("Saving Swagger JSON documents to in-memory Database...");
+
+            // Save all retrived service -> JSON pairs 
+            _context.SaveChanges();
+
+            _logger.LogInformation("Swagger Diff Initialization Complete.");
         }
     }
 }

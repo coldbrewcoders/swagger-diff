@@ -2,15 +2,19 @@
 
 namespace SwaggerDiff.Models
 {
-  public class SwaggerItem
-  {
-    [Required]
-    public long Id { get; set; }
+    public class SwaggerItem
+    {
+        public SwaggerItem(string serviceName, string serviceJSON)
+        {
+            ServiceName = serviceName;
+            ServiceJSON = serviceJSON;
+        }
 
-    [Required]
-    public string ServiceName { get; set; }
+        [Key]
+        [Required]
+        public string ServiceName { get; set; }
 
-    [Required]
-    public string ServiceJSON { get; set; }
-  }
+        [Required]
+        public string ServiceJSON { get; set; }
+    }
 }

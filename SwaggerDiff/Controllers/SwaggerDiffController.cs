@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using SwaggerDiff.Models;
+using SwaggerDiff.Services;
 
 namespace SwaggerDiff.Controllers
 {
@@ -12,82 +14,63 @@ namespace SwaggerDiff.Controllers
   public class SwaggerDiffController : ControllerBase
   {
     private readonly SwaggerDiffContext _context;
+    private readonly ILogger _logger;
 
-    public SwaggerDiffController(SwaggerDiffContext context)
+    public SwaggerDiffController(SwaggerDiffContext context, ILogger logger)
     {
       _context = context;
+      _logger = logger;
     }
 
     // GET: api/swaggerdiff
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SwaggerItem>>> GetSwaggerItems()
     {
+      // Return every instance of service -> JSON we have stored
       return await _context.SwaggerItems.ToListAsync();
     }
 
-    // GET: api/swaggerdiff/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<SwaggerItem>> GetSwaggerItem(long id)
+    // GET: api/swaggerdiff/:serviceName (Exposed Webhook URL)
+    [HttpGet("{serviceName}")]
+    [HttpPost("{serviceName}")]
+    public async Task<ActionResult<SwaggerItem>> GetSwaggerItem(string serviceName)
     {
-      SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(id);
+        // Create instance of SwaggerServiceUrlManager
+        SwaggerServiceUrlManager urlManager = new SwaggerServiceUrlManager();
 
-      if (swaggerItem == null) return NotFound();
+        // Check if webhook called with valid service name
+        if(!urlManager.ServiceNames.Contains(serviceName))
+        {
+            return BadRequest();
+        }
 
-      return swaggerItem;
-    }
+        SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(serviceName);
 
-    // PUT: api/swaggerdiff/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutSwaggerItem(long id, SwaggerItem swaggerItem)
-    {
-      // Check if swaggerItem is a valid SwaggerItem model
-      if (ModelState.IsValid) return BadRequest();
+        // Fetch new swagger JSON document
 
-      // Find the swaggerItem from SwaggerItems context (returns null by default)
-      SwaggerItem item = await _context.SwaggerItems.FirstOrDefaultAsync(s => s.Id == id);
+        // Check to see if there is a change
 
-      if (item != null)
-      {
-        item.ServiceName = swaggerItem.ServiceName;
-        item.ServiceJSON = swaggerItem.ServiceJSON;
-      }
+        // If there is a change...
 
-      try
-      {
-        // Update the DB with in memory context DB changes
-        await _context.SaveChangesAsync();
-      }
-      catch (DbUpdateConcurrencyException ex)
-      {
-        return BadRequest(ex.Message);
-      }
+            // Send slack notification of API change
 
-      return NoContent();
-    }
+            // Update DB with new service JSON file
+            /* 
+            
+                _context.Entry(swaggerItem).State = EntityState.Modified;
 
-    // POST: api/swaggerdiff
-    [HttpPost]
-    public async Task<ActionResult<SwaggerItem>> PostSwaggerItem(SwaggerItem swaggerItem)
-    {
-      await _context.SwaggerItems.AddAsync(swaggerItem);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    TODO: do something?
+                }
 
-      await _context.SaveChangesAsync();
+              */
 
-      return CreatedAtAction(nameof(GetSwaggerItem), new { id = swaggerItem.Id }, swaggerItem);
-    }
-
-    // DELETE: api/swaggerdiff/5
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<SwaggerItem>> DeleteSwaggerItem(long id)
-    {
-      SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(id);
-
-      if (swaggerItem == null) return NotFound();
-
-      _context.SwaggerItems.Remove(swaggerItem);
-      await _context.SaveChangesAsync();
-
-      return Ok();
+        return Ok();
     }
   }
 }
