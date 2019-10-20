@@ -30,7 +30,7 @@ namespace SwaggerDiff
             services.AddControllers();
 
             // Register swagger service to run
-            services.AddSingleton<ISwaggerService, SwaggerService>(); 
+            services.AddSingleton<ISwaggerService, SwaggerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

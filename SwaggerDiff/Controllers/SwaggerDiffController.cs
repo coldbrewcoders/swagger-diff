@@ -16,7 +16,7 @@ namespace SwaggerDiff.Controllers
     private readonly SwaggerDiffContext _context;
     private readonly ILogger _logger;
 
-    public SwaggerDiffController(SwaggerDiffContext context, ILogger logger)
+    public SwaggerDiffController(SwaggerDiffContext context, ILogger<SwaggerDiffController> logger)
     {
       _context = context;
       _logger = logger;
@@ -26,6 +26,8 @@ namespace SwaggerDiff.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SwaggerItem>>> GetSwaggerItems()
     {
+      _logger.LogInformation("Send contents of in memory database in response");
+
       // Return every instance of service -> JSON we have stored
       return await _context.SwaggerItems.ToListAsync();
     }
