@@ -41,10 +41,10 @@ namespace SwaggerDiff.Controllers
         SwaggerServiceUrlManager urlManager = new SwaggerServiceUrlManager();
 
         // Check if webhook called with valid service name
-        if(!urlManager.ServiceNames.Contains(serviceName))
+        /* if(!urlManager.ServiceNames.Contains(serviceName))
         {
             return BadRequest();
-        }
+        } */
 
         SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(serviceName);
 

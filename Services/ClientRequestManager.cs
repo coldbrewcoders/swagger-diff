@@ -4,24 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace SwaggerDiff.Services
 {
-    public class ClientRequestManager : HttpClient
+    public class ClientRequestManager
     {
         // Only instantiate one instance of HttpClient
-        static readonly HttpClient client = new HttpClient();
+        static readonly HttpClient httpClient = new HttpClient();
 
-        private readonly ILogger _logger;
-
-        public ClientRequestManager(ILogger<SwaggerService> logger) 
-        {
-            _logger = logger;
-        }
-
-        public async void fetchServiceSwaggerJsonAsync(string requestUrl)
+        public async void FetchServiceSwaggerJsonAsync(string requestUrl)
         {
             try 
             {
-                // Invoke a get request to fetch swagger JSON document
-                HttpResponseMessage response = await client.GetAsync(requestUrl);
+                // Invoke a get request to fetch swagger JSON document async
+                HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
 
                 // Ensure response code is a success type
                 response.EnsureSuccessStatusCode();
@@ -30,13 +23,13 @@ namespace SwaggerDiff.Services
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 // Output data received from request
-                _logger.LogInformation(responseBody);
+                Console.WriteLine(responseBody);
             }
             catch(HttpRequestException error)
             {
-                _logger.LogError("Failed to fetch Swagger JSON document");	
-                _logger.LogError($"Message :{error.Message}");
+                throw error;
             }
         }
+
     }
 }
