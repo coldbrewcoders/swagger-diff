@@ -9,8 +9,6 @@ namespace SwaggerDiff.Services
         private readonly SwaggerDiffContext _context;
         private readonly ILogger _logger;
         private readonly ISwaggerServiceUrlManager _urlManager;
-
-        // Create instance of ClientRequestManager
         private IClientRequestManager _clientRequestManager;
 
         public SwaggerService(SwaggerDiffContext context, ILogger<SwaggerService> logger, ISwaggerServiceUrlManager urlManager, IClientRequestManager clientRequestManager)
