@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace SwaggerDiff.Services
 {
-    public class ClientRequestManager
+    public class ClientRequestManager : IClientRequestManager
     {
         // Only instantiate one instance of HttpClient
         static readonly HttpClient httpClient = new HttpClient();
@@ -24,7 +24,7 @@ namespace SwaggerDiff.Services
                 // Return response body as string
                 return responseBody;
             }
-            catch(HttpRequestException error)
+            catch (HttpRequestException error)
             {
                 throw error;
             }

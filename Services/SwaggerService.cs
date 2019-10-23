@@ -8,17 +8,17 @@ namespace SwaggerDiff.Services
     {
         private readonly SwaggerDiffContext _context;
         private readonly ILogger _logger;
-
-        // Create instance of SwaggerServiceUrlManager
-        private SwaggerServiceUrlManager urlManager = new SwaggerServiceUrlManager();
+        private readonly ISwaggerServiceUrlManager _urlManager;
 
         // Create instance of ClientRequestManager
-        private ClientRequestManager clientRequestManager = new ClientRequestManager();
+        private IClientRequestManager _clientRequestManager;
 
-        public SwaggerService(SwaggerDiffContext context, ILogger<SwaggerService> logger)
+        public SwaggerService(SwaggerDiffContext context, ILogger<SwaggerService> logger, ISwaggerServiceUrlManager urlManager, IClientRequestManager clientRequestManager)
         {
             _context = context;
             _logger = logger;
+            _urlManager = urlManager;
+            _clientRequestManager = clientRequestManager;
         }
 
         public async void Initialize()
@@ -26,13 +26,13 @@ namespace SwaggerDiff.Services
             _logger.LogInformation("Fetching JSON for services...");
 
             // Iterate over service list
-            foreach(string serviceName in urlManager.ServiceNames) 
+            foreach (string serviceName in _urlManager.ServiceNames) 
             {
                 // Find the JSON url for the service
-                string requestUrl = urlManager.GetUrl(serviceName);
+                string requestUrl = _urlManager.GetUrl(serviceName);
 
                 // Make async request to get the swagger JSON document
-                string serviceJson = await clientRequestManager.FetchServiceSwaggerJsonAsync(requestUrl);
+                string serviceJson = await _clientRequestManager.FetchServiceSwaggerJsonAsync(requestUrl);
 
                 // Save JSON instead of URL
                 SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);

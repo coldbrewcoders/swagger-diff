@@ -2,8 +2,13 @@ using System;
 
 namespace SwaggerDiff.Services
 {
-    public class SwaggerServiceUrlManager
+    public class SwaggerServiceUrlManager : ISwaggerServiceUrlManager
     {
+        private string _port;
+        private string _hostname;
+        private string _apiVersion;
+        public string[] ServiceNames { get; }
+
         public SwaggerServiceUrlManager() {
             string port = Environment.GetEnvironmentVariable("SWAGGER_DIFF_PORT");
             string hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
@@ -16,14 +21,9 @@ namespace SwaggerDiff.Services
             ServiceNames = serviceNames.Split(",");
         }
 
-        private string _port;
-        private string _hostname;
-        private string _apiVersion;
-        public readonly string[] ServiceNames;
-
         public string GetUrl(string serviceName)
         {
-            if(Array.Exists(ServiceNames, name => name == serviceName))
+            if (Array.Exists(ServiceNames, name => name == serviceName))
             {
                 return $"{_hostname}:{_port}/api/{serviceName}/swagger/{_apiVersion}/swagger.json";
             }

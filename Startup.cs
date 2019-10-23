@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.EntityFrameworkCore;
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
 
@@ -28,6 +27,12 @@ namespace SwaggerDiff
 
             // Add SwaggerDiff controllers
             services.AddControllers();
+
+            // Register swagger service URL manager
+            services.AddSingleton<ISwaggerServiceUrlManager, SwaggerServiceUrlManager>();
+            
+            // Register client request manager
+            services.AddSingleton<IClientRequestManager, ClientRequestManager>();
 
             // Register swagger service to run
             services.AddSingleton<ISwaggerService, SwaggerService>();
