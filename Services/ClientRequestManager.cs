@@ -21,8 +21,6 @@ namespace SwaggerDiff.Services
                 // Get the response body
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                // TODO: JSON deserialization
-
                 // Return response body as string
                 return responseBody;
             }

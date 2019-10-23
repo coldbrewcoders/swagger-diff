@@ -42,16 +42,11 @@ namespace SwaggerDiff
             if (env.IsDevelopment())
             {
                 logger.LogInformation("Running in development mode.");
-
-                // When running in development mode, serve exceptions to webpage
-                app.UseDeveloperExceptionPage();
             }
 
-            if(env.IsProduction()) {
+            if(env.IsProduction()) 
+            {
                 logger.LogInformation("Running in development production mode.");
-
-                // When in production always use https
-                app.UseHttpsRedirection();
             }
 
             // Apply routing

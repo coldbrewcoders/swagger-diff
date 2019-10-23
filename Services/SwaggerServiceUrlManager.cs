@@ -8,14 +8,12 @@ namespace SwaggerDiff.Services
             string port = Environment.GetEnvironmentVariable("SWAGGER_DIFF_PORT");
             string hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
             string apiVersion = Environment.GetEnvironmentVariable("SWAGGER_DIFF_API_VERSION");
-            string serviceNames = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES")
+            string serviceNames = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES");
 
-            Console.WriteLine($"DEBUG::{port}::{hostname}::{apiVersion}::{serviceNames}");
-
-            _port = 
-            _hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
-            _apiVersion = Environment.GetEnvironmentVariable("SWAGGER_DIFF_API_VERSION");
-            ServiceNames = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(",");
+            _port = port;
+            _hostname = hostname;
+            _apiVersion = apiVersion;
+            ServiceNames = serviceNames.Split(",");
         }
 
         private string _port;
@@ -29,7 +27,8 @@ namespace SwaggerDiff.Services
             {
                 return $"{_hostname}:{_port}/api/{serviceName}/swagger/{_apiVersion}/swagger.json";
             }
-            else {
+            else 
+            {
                 throw new ArgumentException("Parameter must be one of the configured service names.", "serviceName");
             } 
         }
