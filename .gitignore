@@ -404,5 +404,12 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 
+# Generated Files
+bin/
+obj/
+
+# Testing Server
+node_modules/
+
 # Local envirement variables
 #.env

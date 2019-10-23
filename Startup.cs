@@ -36,7 +36,7 @@ namespace SwaggerDiff
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-            // Blocking task to get all the swagger JSONs from each service
+            // Blocking task to get all the swagger JSON documents from each service
             app.ApplicationServices.GetService<ISwaggerService>().Initialize();
 
             if (env.IsDevelopment())

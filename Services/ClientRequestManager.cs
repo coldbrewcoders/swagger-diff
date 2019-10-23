@@ -1,6 +1,5 @@
-using System;
 using System.Net.Http;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace SwaggerDiff.Services
 {
@@ -9,7 +8,7 @@ namespace SwaggerDiff.Services
         // Only instantiate one instance of HttpClient
         static readonly HttpClient httpClient = new HttpClient();
 
-        public async void FetchServiceSwaggerJsonAsync(string requestUrl)
+        public async Task<string> FetchServiceSwaggerJsonAsync(string requestUrl)
         {
             try 
             {
@@ -22,8 +21,10 @@ namespace SwaggerDiff.Services
                 // Get the response body
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                // Output data received from request
-                Console.WriteLine(responseBody);
+                // TODO: JSON deserialization
+
+                // Return response body as string
+                return responseBody;
             }
             catch(HttpRequestException error)
             {
