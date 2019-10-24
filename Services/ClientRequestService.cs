@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace SwaggerDiff.Services
 {
-    public class ClientRequestManager : IClientRequestManager
+    public class ClientRequestService : IClientRequestService
     {
         // Only instantiate one instance of HttpClient
         static readonly HttpClient httpClient = new HttpClient();

@@ -1,36 +1,44 @@
+using System;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 using SwaggerDiff.Models;
 
 namespace SwaggerDiff.Services
 {
-    public class SwaggerService : ISwaggerService
+    public class InitializationService : IInitializationService
     {
         private readonly SwaggerDiffContext _context;
         private readonly ILogger _logger;
-        private readonly ISwaggerServiceUrlManager _urlManager;
-        private IClientRequestManager _clientRequestManager;
+        private readonly IUrlService _urlService;
+        private readonly IClientRequestService _clientRequestService;
 
-        public SwaggerService(SwaggerDiffContext context, ILogger<SwaggerService> logger, ISwaggerServiceUrlManager urlManager, IClientRequestManager clientRequestManager)
+        public InitializationService(SwaggerDiffContext context, ILogger<InitializationService> logger, IUrlService urlService, IClientRequestService clientRequestService)
         {
             _context = context;
             _logger = logger;
-            _urlManager = urlManager;
-            _clientRequestManager = clientRequestManager;
+            _urlService = urlService;
+            _clientRequestService = clientRequestService;
         }
 
-        public async void Initialize()
+        public async Task Initialize()
         {
             _logger.LogInformation("Fetching JSON for services...");
 
-            // Iterate over service list
-            foreach (string serviceName in _urlManager.ServiceNames) 
+            // Iterate over all service names
+            foreach (string serviceName in _urlService.GetServiceNames()) 
             {
+                Console.WriteLine(serviceName);
+
                 // Find the JSON url for the service
-                string requestUrl = _urlManager.GetUrl(serviceName);
+                string requestUrl = _urlService.GetUrl(serviceName);
+
+                Console.WriteLine(requestUrl);
 
                 // Make async request to get the swagger JSON document
-                string serviceJson = await _clientRequestManager.FetchServiceSwaggerJsonAsync(requestUrl);
+                string serviceJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(requestUrl);
+
+                Console.WriteLine(serviceJson);
 
                 // Save JSON instead of URL
                 SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);
@@ -45,7 +53,6 @@ namespace SwaggerDiff.Services
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Swagger Diff Initialization Complete.");
-        
         }
     }
 }

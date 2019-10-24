@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
 
@@ -29,20 +30,20 @@ namespace SwaggerDiff
             services.AddControllers();
 
             // Register swagger service URL manager
-            services.AddSingleton<ISwaggerServiceUrlManager, SwaggerServiceUrlManager>();
+            services.AddSingleton<IUrlService, UrlService>();
             
             // Register client request manager
-            services.AddSingleton<IClientRequestManager, ClientRequestManager>();
+            services.AddSingleton<IClientRequestService, ClientRequestService>();
 
             // Register swagger service to run
-            services.AddSingleton<ISwaggerService, SwaggerService>();
+            services.AddSingleton<IInitializationService, InitializationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             // Blocking task to get all the swagger JSON documents from each service
-            app.ApplicationServices.GetService<ISwaggerService>().Initialize();
+            app.ApplicationServices.GetService<IInitializationService>().Initialize();
 
             if (env.IsDevelopment())
             {
