@@ -35,7 +35,7 @@ namespace SwaggerDiff.Controllers
         public async Task<ActionResult<IEnumerable<SwaggerItem>>> GetSwaggerItems()
         {
             // Return every instance of SwaggerItem we have stored in the in-memory DB
-            return await _context.SwaggerItems.ToListAsync();
+            return Ok(await _context.SwaggerItems.ToListAsync());
         }
 
         // GET: api/swaggerdiff/:serviceName (Exposed Webhook URL)

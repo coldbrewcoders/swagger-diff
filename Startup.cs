@@ -47,7 +47,7 @@ namespace SwaggerDiff
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             // Blocking task to get all the swagger JSON documents from each service
-            app.ApplicationServices.GetService<IInitializationService>().Initialize();
+            app.ApplicationServices.GetService<IInitializationService>().Initialize().GetAwaiter().GetResult();
 
             if (env.IsDevelopment())
             {
