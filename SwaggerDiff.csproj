@@ -12,6 +12,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0"/>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0"/>
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0"/>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.4" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -7,6 +8,14 @@ namespace SwaggerDiff.Services
     {
         // Only instantiate one instance of HttpClient
         static readonly HttpClient httpClient = new HttpClient();
+
+        // Slack webhook URL to post slack messages to
+        private readonly string _slackWebhookUrl;
+        
+        public ClientRequestService() {
+            // Init slack webhook url
+            _slackWebhookUrl = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SLACK_WEBHOOK");
+        }
 
         public async Task<string> FetchServiceSwaggerJsonAsync(string requestUrl)
         {
@@ -29,6 +38,8 @@ namespace SwaggerDiff.Services
                 throw error;
             }
         }
+
+        // TODO: Write method that sends client request to slack webhook (results in slack notification)
 
     }
 }

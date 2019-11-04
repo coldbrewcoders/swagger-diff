@@ -4,6 +4,7 @@ namespace SwaggerDiff.Services
     {
         string[] GetServiceNames();
         bool IsValidServiceName(string serviceName);
-        string GetUrl(string serviceName);
+        string GetSwaggerDocumentUrl(string serviceName);
+        string GetSlackWebhookUrl();
     }
 }

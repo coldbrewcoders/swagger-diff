@@ -1,24 +1,39 @@
 using System;
 
+
 namespace SwaggerDiff.Services
 {
     public class UrlService : IUrlService
     {
+        // Swagger json document URL properties
         private readonly string _port;
         private readonly string _hostname;
         private readonly string _apiVersion;
+
+        // All service names
         private readonly string[] _serviceNames;
 
-        public UrlService() {
+        // Slack webhook url
+        private readonly string _slackWebhookUrl;
+
+        public UrlService() 
+        {
+            // Optional evn variable
             string port = Environment.GetEnvironmentVariable("SWAGGER_DIFF_PORT");
-            string hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
-            string apiVersion = Environment.GetEnvironmentVariable("SWAGGER_DIFF_API_VERSION");
-            string serviceNames = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES");
+
+            // Use default port 80
+            if (port == null) 
+            {
+                port = "80";
+            }
 
             _port = port;
-            _hostname = hostname;
-            _apiVersion = apiVersion;
-            _serviceNames = serviceNames.Split(",");
+
+            // Required env variables
+            _hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
+            _apiVersion = Environment.GetEnvironmentVariable("SWAGGER_DIFF_API_VERSION");
+            _serviceNames = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(",");
+            _slackWebhookUrl = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SLACK_WEBHOOK");
         }
 
         public string[] GetServiceNames()
@@ -31,11 +46,14 @@ namespace SwaggerDiff.Services
             return Array.Exists(_serviceNames, name => name == serviceName);
         }
 
-        public string GetUrl(string serviceName)
+        public string GetSwaggerDocumentUrl(string serviceName)
         {
             return $"{_hostname}:{_port}/api/{serviceName}/swagger/{_apiVersion}/swagger.json";
         }
 
+        public string GetSlackWebhookUrl()
+        {
+            return _slackWebhookUrl;
+        }
     }
-    
 }

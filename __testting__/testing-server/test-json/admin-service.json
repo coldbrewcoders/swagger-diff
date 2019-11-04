@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Admin Service API",
+    "version": "V1"
+  },
+  "servers": [
+    {
+      "url": "https://dev.templummarkets.com/api/admin"
+    }
+  ],
+  "paths": {
+    "/banner": {
+      "get": {
+        "tags": [
+          "Utility"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService.Models.TradeSettings.Banner"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService.Models.TradeSettings.Banner"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService.Models.TradeSettings.Banner"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService.Models.TradeSettings.Banner"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService.Models.TradeSettings.Banner"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-status/{symbolId}": {
+      "get": {
+        "tags": [
+          "Utility"
+        ],
+        "parameters": [
+          {
+            "name": "symbolId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminService.Models.TradeSettings.Banner": {
+        "required": [
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "isEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

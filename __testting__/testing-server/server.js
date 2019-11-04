@@ -1,16 +1,12 @@
 const express = require("express");
-
+const path = require("path");
 
 // Create express app
 let app = express();
 
 // Serve some simple json
 app.get("*", (_, res) => {
-  res.send({
-    test1: "one",
-    test2: "two",
-    test3: "three"
-  });
+  res.sendFile(path.join(__dirname, "./test-json/admin-service.json"));
 });
 
 const PORT = process.env.SWAGGER_DIFF_PORT;

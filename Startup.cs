@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
 
+
 namespace SwaggerDiff
 {
     public class Startup
@@ -29,14 +30,17 @@ namespace SwaggerDiff
             // Add SwaggerDiff controllers
             services.AddControllers();
 
-            // Register swagger service URL manager
+            // Inject url service
             services.AddSingleton<IUrlService, UrlService>();
             
-            // Register client request manager
+            // Inject client request service
             services.AddSingleton<IClientRequestService, ClientRequestService>();
 
-            // Register swagger service to run
+            // Inject Initialization service
             services.AddSingleton<IInitializationService, InitializationService>();
+
+            // Inject compare service
+            services.AddSingleton<ICompareService, CompareService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

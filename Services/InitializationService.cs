@@ -23,27 +23,23 @@ namespace SwaggerDiff.Services
 
         public async Task Initialize()
         {
-            _logger.LogInformation("Fetching JSON for services...");
+            _logger.LogInformation("Fetching JSON for all services...");
 
             // Iterate over all service names
             foreach (string serviceName in _urlService.GetServiceNames()) 
             {
-                Console.WriteLine(serviceName);
+                _logger.LogInformation($"Loading {serviceName} service JSON document");
 
-                // Find the JSON url for the service
-                string requestUrl = _urlService.GetUrl(serviceName);
-
-                Console.WriteLine(requestUrl);
+                // Find the swagger JSON document url for the service
+                string requestUrl = _urlService.GetSwaggerDocumentUrl(serviceName);
 
                 // Make async request to get the swagger JSON document
                 string serviceJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(requestUrl);
 
-                Console.WriteLine(serviceJson);
-
                 // Save JSON instead of URL
                 SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);
 
-                // Add new key, val pair of servicename -> Swagger JSON to in-memory DB
+                // Save new key, val pair of 'servicename -> Swagger JSON' to in-memory DB
                 await _context.SwaggerItems.AddAsync(newEntry);
             }
 

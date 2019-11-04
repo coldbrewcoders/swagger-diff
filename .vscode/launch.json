@@ -13,7 +13,12 @@
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "SWAGGER_DIFF_PORT": "8888",
+                "SWAGGER_DIFF_HOSTNAME": "http://localhost",
+                "SWAGGER_DIFF_SERVICENAMES": "admin",
+                "SWAGGER_DIFF_API_VERSION": "1",
+                "SWAGGER_DIFF_SLACK_WEBHOOK": "https://hooks.slack.com/services/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"
             }
         }
     ]
