@@ -1,0 +1,4211 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Offering Service API",
+    "version": "V1"
+  },
+  "servers": [
+    {
+      "url": "https://dev.templummarkets.com/api/offering"
+    }
+  ],
+  "paths": {
+    "/admin/companies": {
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "PN",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PS",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "NP",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "IC",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ER",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "SB",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.SortBy"
+              }
+            }
+          },
+          {
+            "name": "FB",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.FilterBy"
+              }
+            }
+          },
+          {
+            "name": "AB.AF",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TemplumDataExtensions.AggregateFuncs"
+            }
+          },
+          {
+            "name": "AB.CN",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "IA",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ST",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SC",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.Column"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/basic-info": {
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/contact-info": {
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/basic-details": {
+      "post": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicDetailsCreateViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicDetailsCreateViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicDetailsCreateViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicDetailsCreateViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/description": {
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyDescriptionViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/logo": {
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/team-members": {
+      "post": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/team-members/{memberId}": {
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/team-members/{memberTypeId}": {
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "memberTypeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberViewModel"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberViewModel"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.TeamMemberViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/companies/{companyId}/news": {
+      "post": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsViewModel"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsViewModel"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/companies/news/{newsId}": {
+      "put": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "newsId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.Admin.NewsCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminCompany"
+        ],
+        "parameters": [
+          {
+            "name": "newsId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/offerings": {
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "PN",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PS",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "NP",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "IC",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ER",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "SB",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.SortBy"
+              }
+            }
+          },
+          {
+            "name": "FB",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.FilterBy"
+              }
+            }
+          },
+          {
+            "name": "AB.AF",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TemplumDataExtensions.AggregateFuncs"
+            }
+          },
+          {
+            "name": "AB.CN",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "IA",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ST",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SC",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TemplumDataExtensions.Column"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingCreateViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingCreateViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingCreateViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingCreateViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/asset-types": {
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplumPoco.Common.LookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplumPoco.Common.LookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplumPoco.Common.LookupItem"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplumPoco.Common.LookupItem"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplumPoco.Common.LookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/basic-info": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/duration-info": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDurationInfoCreateEditViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/data-room": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/type-details": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/main-image": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/custom-fields": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/payment-instructions": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.PaymentInstructionsEditViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/offerings/{offeringId}/{status}": {
+      "put": {
+        "tags": [
+          "AdminOffering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/companies/look-up": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyLookup"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyLookup"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyLookup"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyLookup"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyLookup"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/logo/{logoType}": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "logoType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/description-image": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/team-members": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.TeamMember"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.TeamMember"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.TeamMember"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.TeamMember"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.TeamMember"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/images": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyImage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyImage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyImage"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyImage"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.CompanyImage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/news": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.NewsItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.NewsItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.NewsItem"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.NewsItem"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.NewsItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.OfferingLookup"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.OfferingLookup"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.OfferingLookup"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.OfferingLookup"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.OfferingLookup"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/current-offerings": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/past-offerings": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.Offering"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{offeringId}": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CompanyInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CompanyInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CompanyInfo"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CompanyInfo"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CompanyInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{offeringId}/main-image": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{offeringId}/accepted-payment-types": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.PaymentType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.PaymentType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.PaymentType"
+                  }
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.PaymentType"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferingService.Models.PaymentType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-types/{id}/rate-usd": {
+      "get": {
+        "tags": [
+          "Offering"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-types/conversions": {
+      "post": {
+        "tags": [
+          "Offering"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.ConversionRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.ConversionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.ConversionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.ConversionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.ConversionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.ConversionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.ConversionResponse"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.ConversionResponse"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferingService.Models.ConversionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-types/tokencount/rate-nonusd": {
+      "post": {
+        "tags": [
+          "Offering"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenCountRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenCountRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenCountRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenCountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumCalculator.Models.TokenInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumCalculator.Models.TokenInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumCalculator.Models.TokenInfo"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumCalculator.Models.TokenInfo"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplumCalculator.Models.TokenInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-types/totalamount/rate-nonusd": {
+      "post": {
+        "tags": [
+          "Offering"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenAmountRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenAmountRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenAmountRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingService.Models.TokenAmountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "application/vnd.ms-excel": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{offeringId}/documents-viewed": {
+      "post": {
+        "tags": [
+          "Offering"
+        ],
+        "parameters": [
+          {
+            "name": "offeringId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/company/{membershipApplicationCode}/logo": {
+      "get": {
+        "tags": [
+          "Utility"
+        ],
+        "parameters": [
+          {
+            "name": "membershipApplicationCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TemplumDataExtensions.SortBy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "boolean"
+          },
+          "cn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumDataExtensions.ComparisonOperators": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TemplumDataExtensions.FilterBy": {
+        "type": "object",
+        "properties": {
+          "vs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "co": {
+            "$ref": "#/components/schemas/TemplumDataExtensions.ComparisonOperators"
+          },
+          "cn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumDataExtensions.AggregateFuncs": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TemplumDataExtensions.Column": {
+        "type": "object",
+        "properties": {
+          "cn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyListItemViewModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "openOfferings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedOfferings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isTrading": {
+            "type": "boolean"
+          },
+          "sector": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumDataExtensions.QueryResults`1[[OfferingService.Models.Admin.CompanyListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyListItemViewModel"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aggregateResult": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyBasicInfoViewModel": {
+        "required": [
+          "address1",
+          "city",
+          "countryId",
+          "name",
+          "phoneNumber",
+          "sectorId",
+          "state",
+          "website",
+          "zip"
+        ],
+        "type": "object",
+        "properties": {
+          "sector": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "sectorId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "tel",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "address1": {
+            "type": "string",
+            "nullable": true
+          },
+          "address2": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel": {
+        "required": [
+          "address1",
+          "city",
+          "countryId",
+          "name",
+          "phoneNumber",
+          "sectorId",
+          "state",
+          "website",
+          "zip"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "sectorId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "tel",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "address1": {
+            "type": "string",
+            "nullable": true
+          },
+          "address2": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyContactDetailsViewModel": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "tel",
+            "nullable": true
+          },
+          "altPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "tel",
+            "nullable": true
+          },
+          "altPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyBasicDetailsCreateViewModel": {
+        "required": [
+          "companyBasicInfo",
+          "companyContactDetails"
+        ],
+        "type": "object",
+        "properties": {
+          "companyBasicInfo": {
+            "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyBasicInfoCreateEditViewModel"
+          },
+          "companyContactDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.Admin.CompanyContactDetailsCreateEditViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.CompanyDescriptionViewModel": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.TeamMemberCreateEditViewModel": {
+        "required": [
+          "bio",
+          "firstName",
+          "lastName",
+          "memberTypeId",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "memberTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.TeamMemberViewModel": {
+        "required": [
+          "bio",
+          "firstName",
+          "lastName",
+          "memberTypeId",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "memberTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.NewsCreateEditViewModel": {
+        "required": [
+          "publishDate",
+          "title",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Admin.NewsViewModel": {
+        "required": [
+          "publishDate",
+          "title",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingListItemViewModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "assetType": {
+            "type": "string",
+            "nullable": true
+          },
+          "assetTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "regType": {
+            "type": "string",
+            "nullable": true
+          },
+          "regTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalQuantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "size": {
+            "type": "number",
+            "format": "double"
+          },
+          "closingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "orders": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "string",
+            "nullable": true
+          },
+          "isLive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumDataExtensions.QueryResults`1[[OfferingService.Models.OfferingListItemViewModel, OfferingService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfferingService.Models.OfferingListItemViewModel"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aggregateResult": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingBasicInfoCreateEditViewModel": {
+        "required": [
+          "companyId",
+          "minimumInvestmentAmount",
+          "name",
+          "symbol",
+          "tokenTypeId",
+          "totalQuantity",
+          "unitPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "symbol": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[a-zA-Z0-9]*$",
+            "type": "string",
+            "nullable": true
+          },
+          "cusip": {
+            "maxLength": 9,
+            "minLength": 9,
+            "pattern": "^[a-zA-Z0-9]*$",
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "minimumInvestmentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalQuantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tokenTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingCreateViewModel": {
+        "required": [
+          "basicInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "basicInfo": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingBasicInfoCreateEditViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumPoco.Common.LookupItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingBasicInfoViewModel": {
+        "required": [
+          "companyId",
+          "minimumInvestmentAmount",
+          "name",
+          "symbol",
+          "tokenTypeId",
+          "totalQuantity",
+          "unitPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "symbol": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[a-zA-Z0-9]*$",
+            "type": "string",
+            "nullable": true
+          },
+          "cusip": {
+            "maxLength": 9,
+            "minLength": 9,
+            "pattern": "^[a-zA-Z0-9]*$",
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "minimumInvestmentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalQuantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tokenTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.DurationInfoCreateEditViewModel": {
+        "required": [
+          "isApplicable"
+        ],
+        "type": "object",
+        "properties": {
+          "isApplicable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isRollingClose": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-span",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-span",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingDurationInfoCreateEditViewModel": {
+        "required": [
+          "privateSale",
+          "publicSale"
+        ],
+        "type": "object",
+        "properties": {
+          "publicSale": {
+            "$ref": "#/components/schemas/OfferingService.Models.DurationInfoCreateEditViewModel"
+          },
+          "privateSale": {
+            "$ref": "#/components/schemas/OfferingService.Models.DurationInfoCreateEditViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingDataRoomInfoCreateEditViewModel": {
+        "type": "object",
+        "properties": {
+          "thirdPartyDataRoomUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingDebtDetailsViewModel": {
+        "type": "object",
+        "properties": {
+          "coupon": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "couponFormatted": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "couponPeriod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "yieldToMaturity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "yieldToMaturityFormatted": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "maturityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "convertible": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "payInKind": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingEquityDetailsViewModel": {
+        "required": [
+          "classOfSecurities",
+          "dividend",
+          "voting"
+        ],
+        "type": "object",
+        "properties": {
+          "preMoneyValuation": {
+            "maximum": 100000000000,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "preMoneyValuationFormatted": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "postMoneyValuation": {
+            "maximum": 100000000000,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "postMoneyValuationFormatted": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "classOfSecurities": {
+            "type": "string",
+            "nullable": true
+          },
+          "dividend": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "voting": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingLimitedPartnershipDetailsViewModel": {
+        "required": [
+          "fundLife",
+          "investmentPeriod",
+          "investmentStrategy",
+          "sectorId"
+        ],
+        "type": "object",
+        "properties": {
+          "investmentStrategy": {
+            "type": "string",
+            "nullable": true
+          },
+          "sectorId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fundLife": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "investmentPeriod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingTypeDetailsEditViewModel": {
+        "required": [
+          "typeId"
+        ],
+        "type": "object",
+        "properties": {
+          "typeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "debtDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingDebtDetailsViewModel"
+          },
+          "equityDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingEquityDetailsViewModel"
+          },
+          "limitedPartnershipDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingLimitedPartnershipDetailsViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingTypeDetailsViewModel": {
+        "required": [
+          "typeId"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "debtDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingDebtDetailsViewModel"
+          },
+          "equityDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingEquityDetailsViewModel"
+          },
+          "limitedPartnershipDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingLimitedPartnershipDetailsViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.CustomField": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.PaymentInstructionsEditViewModel": {
+        "required": [
+          "abaNumber",
+          "accountNumber",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "memoSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "abaNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.CompanyLookup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.TeamMember": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.CompanyImage": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.NewsItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "newsDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingLookup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingSector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingRegType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.OfferingAssetType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.Offering": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "investmentOverview": {
+            "type": "string",
+            "nullable": true
+          },
+          "minimumInvestment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "cusip": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sector": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingSector"
+          },
+          "offeringType": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingRegType"
+          },
+          "assetType": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingAssetType"
+          },
+          "tokenPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalTokens": {
+            "type": "number",
+            "format": "double"
+          },
+          "offeringSize": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "isPrivate": {
+            "type": "boolean"
+          },
+          "isUserInvested": {
+            "type": "boolean"
+          },
+          "missionStatement": {
+            "type": "string",
+            "nullable": true
+          },
+          "couponRateOrDividend": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maturityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pik": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "thirdPartyDataroomUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDocumentsViewedChecked": {
+            "type": "boolean"
+          },
+          "customFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfferingService.Models.CustomField"
+            },
+            "nullable": true
+          },
+          "offeringTypeDetails": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingTypeDetailsViewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.CompanyInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offering": {
+            "$ref": "#/components/schemas/OfferingService.Models.Offering"
+          },
+          "mission": {
+            "type": "string",
+            "nullable": true
+          },
+          "overview": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address1": {
+            "type": "string",
+            "nullable": true
+          },
+          "address2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "cusip": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "assetType": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActiveOffering": {
+            "type": "boolean"
+          },
+          "sector": {
+            "$ref": "#/components/schemas/OfferingService.Models.OfferingSector"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.PaymentType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.CurrencyPrice": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "symbol": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "amountIn": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.ConversionItem": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "usdAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "convertedAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.ConversionRequest": {
+        "type": "object",
+        "properties": {
+          "currencyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conversions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfferingService.Models.ConversionItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.ConversionResponse": {
+        "type": "object",
+        "properties": {
+          "currencyPrice": {
+            "$ref": "#/components/schemas/OfferingService.Models.CurrencyPrice"
+          },
+          "conversions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfferingService.Models.ConversionItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.TokenCountRequest": {
+        "type": "object",
+        "properties": {
+          "conversionRate": {
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          },
+          "amountInCurrency": {
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          },
+          "tokenPrice": {
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplumCalculator.Models.TokenInfo": {
+        "type": "object",
+        "properties": {
+          "tokenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OfferingService.Models.TokenAmountRequest": {
+        "type": "object",
+        "properties": {
+          "currencyId": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "conversionRate": {
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          },
+          "tokenCount": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "tokenPrice": {
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

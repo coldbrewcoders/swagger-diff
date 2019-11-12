@@ -1,13 +1,12 @@
-using System;
-using System.Text;
+using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
+
 
 namespace SwaggerDiff.Controllers
 {
@@ -34,8 +33,11 @@ namespace SwaggerDiff.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SwaggerItem>>> GetSwaggerItems()
         {
+            // Get current list of each monitored web service and its Swagger API documentation JSON
+            List<SwaggerItem> swaggerItems = await _context.SwaggerItems.ToListAsync();
+
             // Return every instance of SwaggerItem we have stored in the in-memory DB
-            return Ok(await _context.SwaggerItems.ToListAsync());
+            return Ok(swaggerItems);
         }
 
         // GET: api/swaggerdiff/:serviceName (Exposed Webhook URL)
@@ -46,7 +48,10 @@ namespace SwaggerDiff.Controllers
             // Check if webhook was called with valid service name
             if (!_urlService.IsValidServiceName(serviceName))
             {
-                return BadRequest($"Service name is not valid. Passed service name {serviceName}.");
+                // Construct
+                ErrorObject errorObject = new ErrorObject("invalid_service_name", $"Service name is not valid. Passed service name {serviceName}.");
+
+                return BadRequest(errorObject);
             }
 
             // Get current instance of SwaggerItem for the corresponding service name
@@ -55,11 +60,20 @@ namespace SwaggerDiff.Controllers
             // Get currently stored serialized JSON document for service (keyed on service name)
             string previousJSON = swaggerItem.ServiceJSON;
 
-            // Find URL to get new swagger JSON file
-            string requestUrl = _urlService.GetSwaggerDocumentUrl(serviceName);
-
             // Fetch fresh swagger JSON document for service
-            string freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(requestUrl);
+            string freshJSON;
+
+            try {
+                // Attempt to get fresh JSON 
+                freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
+            }
+            catch(HttpRequestException error) {
+                // Log client request error
+                _logger.LogError($"Error fetching fresh Swagger documentation JSON file for '${serviceName}', ${error}");
+
+                // Return 500 status code
+                return StatusCode(500);
+            }
 
             // Check if the fresh JSON document is identical to the previous one (using MD5 Hash comparison)
             if (_compareService.AreJSONDocumentsIdentical(previousJSON, freshJSON))
@@ -68,15 +82,17 @@ namespace SwaggerDiff.Controllers
                 return Ok();
             }
 
-            // Run diff algorithm on the two JSON documents (Slack notifications will be generated)
-            _compareService.CompareServiceApiSpecs(previousJSON, freshJSON);
-
-            // Update in-memory DB with the fresh JSON document for service name (we know a change has taken place)
+            // We now know that the updated documentation
+            // Update in-memory DB with the fresh JSON document for service name
             swaggerItem.ServiceJSON = freshJSON;
 
             // Save fresh serialized json to to in-memory DB
             await _context.SaveChangesAsync();
+
+            // Run diff algorithm on the two JSON documents (Slack notifications will be generated)
+            _compareService.CheckServiceForApiChanges(previousJSON, freshJSON);
     
+            // Return success status code
             return Ok();
         }
     }

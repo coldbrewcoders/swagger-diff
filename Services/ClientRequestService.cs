@@ -1,6 +1,6 @@
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 
 namespace SwaggerDiff.Services
 {
@@ -8,26 +8,27 @@ namespace SwaggerDiff.Services
     {
         // Only instantiate one instance of HttpClient
         static readonly HttpClient httpClient = new HttpClient();
-
-        // Slack webhook URL to post slack messages to
-        private readonly string _slackWebhookUrl;
         
-        public ClientRequestService() {
-            // Init slack webhook url
-            _slackWebhookUrl = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SLACK_WEBHOOK");
+        private readonly IUrlService _urlService;
+
+        public ClientRequestService(IUrlService urlService) {
+            _urlService = urlService;
         }
 
-        public async Task<string> FetchServiceSwaggerJsonAsync(string requestUrl)
+        public async Task<string> FetchServiceSwaggerJsonAsync(string serviceName)
         {
             try 
             {
-                // Invoke a get request to fetch swagger JSON document async
+                // Get the URL for this web service's Swagger documentation JSON file
+                string requestUrl = _urlService.GetSwaggerDocumentUrl(serviceName);
+
+                // Invoke a GET request to get JSON file
                 HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
 
-                // Ensure response code is a success type
+                // Validate request received a successful status code
                 response.EnsureSuccessStatusCode();
 
-                // Get the response body
+                // Get the response content 
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 // Return response body as string
@@ -35,6 +36,7 @@ namespace SwaggerDiff.Services
             }
             catch (HttpRequestException error)
             {
+                // Let controller handle client request error
                 throw error;
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 
 namespace SwaggerDiff.Services
-{
+{   
     public class UrlService : IUrlService
     {
         // Swagger json document URL properties
@@ -12,41 +12,36 @@ namespace SwaggerDiff.Services
         private readonly string _apiVersion;
 
         // All service names
-        private readonly HashSet<string> _serviceNames;
+        public HashSet<string> ServiceNames { get; }
 
         // Slack webhook url
         public string SlackWebhookUrl { get; }
 
         public UrlService() 
         {
-            // Optional evn variable
-            string port = Environment.GetEnvironmentVariable("SWAGGER_DIFF_PORT");
+            /** Read environment variables that provide swagger documentation and slack message webhook URLs **/
 
-            // Use default port 80
-            if (port == null) 
-            {
-                port = "80";
-            }
-
-            _port = port;
-
-            // Required env variables
+            // Get hostname of swagger documentation URLs from environment variable
             _hostname = Environment.GetEnvironmentVariable("SWAGGER_DIFF_HOSTNAME");
+
+            // Get optional port number of swagger documentation URL from environment variable (default port is 80)
+            _port = Environment.GetEnvironmentVariable("SWAGGER_DIFF_PORT") ?? "80"; 
+
+            // Get API version of all web services that we are monitoring 
+            // NOTE: Currently only 1 API version supported, each monitored service must have same API version
             _apiVersion = Environment.GetEnvironmentVariable("SWAGGER_DIFF_API_VERSION");
-            _serviceNames = new HashSet<string>(Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(","));
+
+            // Get list of web service names from environment variable (service names must be unique)
+            ServiceNames = new HashSet<string>(Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(","));
+
+            // Webhook url from your slack integration that allows app to post messages
             SlackWebhookUrl = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SLACK_WEBHOOK");
         }
 
-        // TODO: fix
-        public string[] GetServiceNames()
-        {
-            return _serviceNames;
-        }
-
-        // TODO: O(1) lookup 
         public bool IsValidServiceName(string serviceName)
         {
-            return Array.Exists(_serviceNames, name => name == serviceName);
+            // Check if string is one of the web services we are monitoring for documentation changes
+            return ServiceNames.Contains(serviceName);
         }
 
         public string GetSwaggerDocumentUrl(string serviceName)

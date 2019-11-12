@@ -2,10 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-
 using SwaggerDiff.Models;
 using SwaggerDiff.Services;
 
@@ -14,20 +12,20 @@ namespace SwaggerDiff
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to inject services to the app.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add in-memory DB context
             services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"), ServiceLifetime.Singleton);
 
-            // Add SwaggerDiff controllers
+            // Add controllers
             services.AddControllers();
 
             // Inject url service
@@ -36,7 +34,7 @@ namespace SwaggerDiff
             // Inject client request service
             services.AddSingleton<IClientRequestService, ClientRequestService>();
 
-            // Inject Initialization service
+            // Inject initialization service
             services.AddSingleton<IInitializationService, InitializationService>();
 
             // Inject compare service
@@ -46,26 +44,16 @@ namespace SwaggerDiff
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-            // Blocking task to get all the swagger JSON documents from each service
+            // Blocking task to load all initial swagger documentation for each web service (blocking)
             app.ApplicationServices.GetService<IInitializationService>().Initialize().GetAwaiter().GetResult();
-
-            if (env.IsDevelopment())
-            {
-                logger.LogInformation("Running in development mode.");
-            }
-
-            if(env.IsProduction()) 
-            {
-                logger.LogInformation("Running in development production mode.");
-            }
 
             // Apply routing
             app.UseRouting();
 
-            // Enable cors since we are exposing webhooks (Allow requests from any origin)
+            // Enable cors to allow exposed webhooks to be called from any origin
             app.UseCors();
 
-            // Apply Controllers as route handlers
+            // Apply Controllers as route handlers 
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
   }

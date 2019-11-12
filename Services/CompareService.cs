@@ -1,8 +1,11 @@
+using System;
 using System.Text;
+using System.IO;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
-using System.IO;
 
 
 namespace SwaggerDiff.Services
@@ -11,20 +14,11 @@ namespace SwaggerDiff.Services
     {
         private string GetJsonMD5Hash(MD5 md5Hash, string str)
         {   
-            // Get the MD5 hash of JSON document as a byte array
+            // Get the MD5 hash of serialized JSON document as a byte array
             byte[] byteArray = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(str));
 
-            // User string builder to return a hex string as hash
-            StringBuilder sBuilder = new StringBuilder();
-
-            // Convert byte array back into string
-            for (int i = 0; i < byteArray.Length; i++)
-            {
-                sBuilder.Append(byteArray[i].ToString("x2"));
-            }
-
-            // Return MD5 hash of string
-            return sBuilder.ToString();
+            // Convert byte array to string and return value
+            return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
         }
 
         private OpenApiDocument GetDeserializedJsonAsOpenApiDocument(string str)
@@ -57,15 +51,51 @@ namespace SwaggerDiff.Services
             }
         }
 
-        public void CompareServiceApiSpecs(string previousJSON, string freshJSON)
+        public void CheckServiceForApiChanges(string previousJSON, string freshJSON)
         {
             // Convert serialized JSON swagger definition into instances of OpenApiDocuments
-            OpenApiDocument previousApiSpecs = this.GetDeserializedJsonAsOpenApiDocument(previousJSON);
-            OpenApiDocument freshApiSpecs = this.GetDeserializedJsonAsOpenApiDocument(freshJSON);
+            OpenApiDocument previousApi = this.GetDeserializedJsonAsOpenApiDocument(previousJSON);
+            OpenApiDocument freshApi = this.GetDeserializedJsonAsOpenApiDocument(freshJSON);
 
-            // TODO: Use two OpenApiDocument instaces to find diffs
+            // Create array of tasks
+            Task[] tasks = new Task[] {
+                CheckForEndpointAddition(previousApi, freshApi),
+                CheckForEndpointRemoval(previousApi, freshApi)
+            };
 
-            // TODO: Send slack notification describing diff
+            // Run all tasks in parallell
+            Task.WaitAll(tasks);
+        }
+
+        private async Task CheckForEndpointAddition(OpenApiDocument previousApi, OpenApiDocument freshApi)
+        {
+            await Task.Run(() => {
+                
+                Console.WriteLine("Checking for endpoint Addition");
+
+                // Get previous API routes
+                OpenApiPaths previousPaths = previousApi.Paths;
+
+                // Get fresh API routes
+                OpenApiPaths freshPaths = freshApi.Paths;
+
+                Console.WriteLine(freshPaths);
+            });
+        }
+
+        private async Task CheckForEndpointRemoval(OpenApiDocument previousApi, OpenApiDocument freshApi)
+        {
+            await Task.Run(() => {
+                Console.WriteLine("Checking for endpoint Removal");
+
+                // Get previous API routes
+                OpenApiPaths previousPaths = previousApi.Paths;
+
+                // Get fresh API routes
+                OpenApiPaths freshPaths = freshApi.Paths;
+
+                Console.WriteLine(freshPaths);
+            });
         }
     }
 }
