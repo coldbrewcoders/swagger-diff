@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.IO;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Microsoft.OpenApi.Models;
@@ -54,8 +53,8 @@ namespace SwaggerDiff.Services
         public void CheckServiceForApiChanges(string previousJSON, string freshJSON)
         {
             // Convert serialized JSON swagger definition into instances of OpenApiDocuments
-            OpenApiDocument previousApi = this.GetDeserializedJsonAsOpenApiDocument(previousJSON);
-            OpenApiDocument freshApi = this.GetDeserializedJsonAsOpenApiDocument(freshJSON);
+            OpenApiDocument previousApi = GetDeserializedJsonAsOpenApiDocument(previousJSON);
+            OpenApiDocument freshApi = GetDeserializedJsonAsOpenApiDocument(freshJSON);
 
             // Create array of tasks
             Task[] tasks = new Task[] {
@@ -69,33 +68,33 @@ namespace SwaggerDiff.Services
 
         private async Task CheckForEndpointAddition(OpenApiDocument previousApi, OpenApiDocument freshApi)
         {
-            await Task.Run(() => {
                 
-                Console.WriteLine("Checking for endpoint Addition");
+            Console.WriteLine("Checking for endpoint Addition");
 
-                // Get previous API routes
-                OpenApiPaths previousPaths = previousApi.Paths;
+            // Get previous API routes
+            OpenApiPaths previousPaths = previousApi.Paths;
 
-                // Get fresh API routes
-                OpenApiPaths freshPaths = freshApi.Paths;
+            // Get fresh API routes
+            OpenApiPaths freshPaths = freshApi.Paths;
 
-                Console.WriteLine(freshPaths);
-            });
+            Console.WriteLine(freshPaths);
+
+            await Task.Delay(1000); 
         }
 
         private async Task CheckForEndpointRemoval(OpenApiDocument previousApi, OpenApiDocument freshApi)
         {
-            await Task.Run(() => {
-                Console.WriteLine("Checking for endpoint Removal");
+            Console.WriteLine("Checking for endpoint Removal");
 
-                // Get previous API routes
-                OpenApiPaths previousPaths = previousApi.Paths;
+            // Get previous API routes
+            OpenApiPaths previousPaths = previousApi.Paths;
 
-                // Get fresh API routes
-                OpenApiPaths freshPaths = freshApi.Paths;
+            // Get fresh API routes
+            OpenApiPaths freshPaths = freshApi.Paths;
 
-                Console.WriteLine(freshPaths);
-            });
+            Console.WriteLine(freshPaths);
+
+            await Task.Delay(1000); 
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -33,14 +34,21 @@ namespace SwaggerDiff.Services
             {
                 _logger.LogInformation($"Loading '{serviceName}' service JSON document");
 
-                // Make async request to get the Swagger documentation JSON
-                string serviceJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
+                try
+                {
+                    // Make async request to get the Swagger documentation JSON
+                    string serviceJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
 
-                // Create new entry for in-memory DB (keyed on unique servicename, stores serialized JSON)
-                SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);
+                    // Create new entry for in-memory DB (keyed on unique servicename, stores serialized JSON)
+                    SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);
 
-                // Add new entry to a thread-safe list
-                _initialSwaggerItems.Add(newEntry);
+                    // Add new entry to a thread-safe list
+                    _initialSwaggerItems.Add(newEntry);
+                }
+                catch (HttpRequestException error)
+                {
+                    _logger.LogInformation($"Client request error fetching '{serviceName}' service JSON document. {error}");
+                }
             });
 
             // Add new entry to in-memory DB
