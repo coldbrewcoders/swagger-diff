@@ -1,0 +1,34 @@
+1. Finish Writing Diff algorithm to detect notable changes
+2. Create Class/Service (Not Singleton) that holds all information needed to create a diff report, populate new instance during diff algorithm
+3. Write method on reporting class/service that Outputs JSON formatted for slack message
+4. Add method to Client Request service that send a client request to the slack webhook
+5. Find way to lock data currently being used from the context (Issue where a db update to json being read mutates object)
+  - Clone object
+  - lock access to context
+  - Use Different DB Provider
+6. If a service fails to get initial data on startup, have webhook simply populate DB instead of performing diff
+7. Improve error handling and logging
+8. Write unit tests for services (figure out framework and strategy)
+9. Write dockerfile to containerize app
+10. Publish on docker-hub
+
+
+**Current Diff Strategy**
+
+Non-Breaking Changes:
+* Addition of route
+* Addition of route http method
+* Addition of response data value
+
+Breaking Changes:
+* Removal of route
+* Removal of route http method
+* Removal of response data value
+* Addition of requested parameter (query string or request body)
+* Removal of request parameter (query string or request body)
+
+-- Find way to have comprehensive report
+* 1 message per endpoint
+* Green if only non-breaking changes
+* Red if contains any breaking changes
+

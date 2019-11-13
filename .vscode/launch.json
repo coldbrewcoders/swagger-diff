@@ -11,7 +11,13 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "logging": {
+                "programOutput": true,
+                "exceptions":  true,
+                "moduleLoad": false,
+                "engineLogging": false,
+                "browserStdOut": false
+            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "SWAGGER_DIFF_PORT": "8888",
