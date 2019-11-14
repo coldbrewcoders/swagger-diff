@@ -48,9 +48,10 @@ namespace SwaggerDiff.Controllers
             // Check if webhook was called with valid service name
             if (!_urlService.IsValidServiceName(serviceName))
             {
-                // Construct
+                // Create error response object
                 ErrorObject errorObject = new ErrorObject("invalid_service_name", $"Service name is not valid. Passed service name {serviceName}.");
 
+                // Return 400 response status with 
                 return BadRequest(errorObject);
             }
 
@@ -63,8 +64,9 @@ namespace SwaggerDiff.Controllers
             // Fetch fresh swagger JSON document for service
             string freshJSON;
 
-            try {
-                // Attempt to get fresh JSON 
+            try 
+            {
+                // Attempt to get fresh JSON via client API request
                 freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
             }
             catch(HttpRequestException error) {
@@ -76,22 +78,22 @@ namespace SwaggerDiff.Controllers
             }
 
             // Check if the fresh JSON document is identical to the previous one (using MD5 Hash comparison)
+            // Note: this is a quick way to rule out any API documentation changes for this web service
             if (_compareService.AreJSONDocumentsIdentical(previousJSON, freshJSON))
             {
                 _logger.LogInformation("Previous and Fresh JSON files are identical, skipping additional checks.");
                 return Ok();
             }
 
-            // We now know that the updated documentation
+            // We now know that the documentation has been updated, perform full suite of diff checks
+            await _compareService.CheckServiceForApiChanges(previousJSON, freshJSON);
+
             // Update in-memory DB with the fresh JSON document for service name
             swaggerItem.ServiceJSON = freshJSON;
 
             // Save fresh serialized json to to in-memory DB
             await _context.SaveChangesAsync();
 
-            // Run diff algorithm on the two JSON documents (Slack notifications will be generated)
-            _compareService.CheckServiceForApiChanges(previousJSON, freshJSON);
-    
             // Return success status code
             return Ok();
         }
