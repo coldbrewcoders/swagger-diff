@@ -1,63 +1,68 @@
+using System;
 using System.Net.Http;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using SwaggerDiff.Models;
+using SwaggerDiff.Services.Interfaces;
 
 
 namespace SwaggerDiff.Services
 {
     public class InitializationService : IInitializationService
     {
-        private readonly SwaggerDiffContext _context;
+        // Injected services
         private readonly ILogger _logger;
         private readonly IUrlService _urlService;
         private readonly IClientRequestService _clientRequestService;
+        private readonly IDocumentStoreService _documentStoreService;
 
-        // Init thread-safe list of SwaggerItem instances
-        private ConcurrentBag<SwaggerItem> _initialSwaggerItems = new ConcurrentBag<SwaggerItem>();
+        // All web-service names (must be unique)
+        private readonly HashSet<string> WebServiceNames;
 
-        public InitializationService(SwaggerDiffContext context, ILogger<InitializationService> logger, IUrlService urlService, IClientRequestService clientRequestService)
+
+        public InitializationService(IUrlService urlService, IClientRequestService clientRequestService, IDocumentStoreService documentStoreService, ILogger<InitializationService> logger)
         {
-            _context = context;
+            // Init Services
             _logger = logger;
             _urlService = urlService;
             _clientRequestService = clientRequestService;
+            _documentStoreService = documentStoreService;
+
+            // Get list of web-service names from env variable (service names must be unique)
+            WebServiceNames = new HashSet<string>(Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(","));
         }
 
-        public async Task Initialize()
+        public bool IsValidWebServiceName(string webServiceName)
         {
-            _logger.LogInformation("Fetching JSON for all services...");
+            // Check if string is one of the web services we are monitoring for documentation changes
+            return WebServiceNames.Contains(webServiceName);
+        }
+
+        public void Initialize()
+        {
+            _logger.LogInformation("Fetching Swagger Documentation for all services...");
 
             // Iterate over all service names (in parallel)
-            Parallel.ForEach(_urlService.ServiceNames, async (serviceName) => 
+            Parallel.ForEach(WebServiceNames, async (webServiceName) => 
             {
-                _logger.LogInformation($"Loading '{serviceName}' service JSON document");
+                _logger.LogInformation($"Loading documentation for web-service: '{webServiceName}' ");
 
                 try
                 {
-                    // Make async request to get the Swagger documentation JSON
-                    string serviceJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
+                    // Make async request to get the Swagger documentation JSON for a web-service
+                    string documentationJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
 
-                    // Create new entry for in-memory DB (keyed on unique servicename, stores serialized JSON)
-                    SwaggerItem newEntry = new SwaggerItem(serviceName, serviceJson);
+                    // Add recieved documentation to thread-safe key-value store
+                    _documentStoreService.SetValue(webServiceName, documentationJson);
 
-                    // Add new entry to a thread-safe list
-                    _initialSwaggerItems.Add(newEntry);
                 }
                 catch (HttpRequestException error)
                 {
-                    _logger.LogInformation($"Client request error fetching '{serviceName}' service JSON document. {error}");
+                    _logger.LogInformation($"Client request error occurred while fetching documentation for web-service: '{webServiceName}'. {error}");
                 }
             });
 
-            // Add new entry to in-memory DB
-            await _context.SwaggerItems.AddRangeAsync(_initialSwaggerItems);
-
-            // Save changes to in-memory DB
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Swagger-Diff initialization complete.");
+            _logger.LogInformation("Successfully loaded documentation for all web-services.");
         }
     }
 }

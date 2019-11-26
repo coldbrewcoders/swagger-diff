@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using SwaggerDiff.Models;
 using SwaggerDiff.Services;
+using SwaggerDiff.Services.Interfaces;
 
 
 namespace SwaggerDiff
@@ -22,30 +21,30 @@ namespace SwaggerDiff
         // This method gets called by the runtime. Use this method to inject services to the app.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add in-memory DB context
-            services.AddDbContext<SwaggerDiffContext>(opt => opt.UseInMemoryDatabase("SwaggerDiffDB"), ServiceLifetime.Singleton);
+            // Inject service to store Swagger documentation JSON values in thread-safe way
+            services.AddSingleton<IDocumentStoreService, DocumentStoreService>();
 
-            // Add controllers
-            services.AddControllers();
-
-            // Inject url service
+            // Inject service to manage URLs for client requests
             services.AddSingleton<IUrlService, UrlService>();
             
-            // Inject client request service
+            // Inject service for making client requests
             services.AddSingleton<IClientRequestService, ClientRequestService>();
+
+            // Inject service for performing Swagger documentation file comparisons
+            services.AddSingleton<ICompareService, CompareService>();
 
             // Inject initialization service
             services.AddSingleton<IInitializationService, InitializationService>();
 
-            // Inject compare service
-            services.AddSingleton<ICompareService, CompareService>();
+            // Add controllers
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             // Blocking task to load all initial swagger documentation for each web service (blocking)
-            app.ApplicationServices.GetService<IInitializationService>().Initialize().GetAwaiter().GetResult();
+            app.ApplicationServices.GetService<IInitializationService>().Initialize();
 
             // Apply routing
             app.UseRouting();

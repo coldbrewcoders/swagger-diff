@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using SwaggerDiff.Services.Interfaces;
 
 
 namespace SwaggerDiff.Services
@@ -20,14 +21,6 @@ namespace SwaggerDiff.Services
             _logger = logger;
         }
 
-        private string GetJsonMD5Hash(MD5 md5Hash, string str)
-        {   
-            // Get the MD5 hash of serialized JSON document as a byte array
-            byte[] byteArray = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(str));
-
-            // Convert byte array to string and return value
-            return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-        }
 
         private OpenApiDocument GetDeserializedJsonAsOpenApiDocument(string str)
         {
@@ -39,24 +32,6 @@ namespace SwaggerDiff.Services
 
             // Return OpenApiDocument object instance for serialized JSON
             return new OpenApiStreamReader().Read(stream, out var diagnostic);
-        }
-
-        public bool AreJSONDocumentsIdentical(string previousJSON, string freshJSON)
-        {
-            using (MD5 md5Hash = MD5.Create())
-            {
-                // Generate MD5 hashes of two passed serialized JSON documents
-                string previousJsonHash = this.GetJsonMD5Hash(md5Hash, previousJSON);
-                string freshJSONHash = this.GetJsonMD5Hash(md5Hash, freshJSON);
-
-                // Compare hash values. If identical, we need no additional checks because document JSON document has not changed
-                if (previousJsonHash == freshJSONHash) 
-                {
-                    return true;
-                }
-                
-                return false;
-            }
         }
 
         public async Task CheckServiceForApiChanges(string previousJSON, string freshJSON)

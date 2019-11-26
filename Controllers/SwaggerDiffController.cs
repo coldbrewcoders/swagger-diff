@@ -1,11 +1,11 @@
+using System.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SwaggerDiff.Models;
-using SwaggerDiff.Services;
+using SwaggerDiff.Services.Interfaces;
 
 
 namespace SwaggerDiff.Controllers
@@ -14,52 +14,57 @@ namespace SwaggerDiff.Controllers
     [ApiController]
     public class SwaggerDiffController : ControllerBase
     {
-        private readonly SwaggerDiffContext _context;
+        // Injected services
         private readonly ILogger _logger;
+        private readonly IInitializationService _initializationService;
         private readonly IUrlService _urlService;
         private readonly IClientRequestService _clientRequestService;
         private readonly ICompareService _compareService;
+        private readonly IDocumentStoreService _documentStoreService;
 
-        public SwaggerDiffController(SwaggerDiffContext context, ILogger<SwaggerDiffController> logger, IUrlService urlService, IClientRequestService clientRequestService, ICompareService compareService)
+
+        public SwaggerDiffController(ILogger<SwaggerDiffController> logger, IInitializationService initializationService, IUrlService urlService, IClientRequestService clientRequestService, ICompareService compareService, IDocumentStoreService documentStoreService)
         {
-            _context = context;
             _logger = logger;
+            _initializationService = initializationService;
             _urlService = urlService;
             _clientRequestService = clientRequestService;
             _compareService = compareService;
+            _documentStoreService = documentStoreService;
         }
 
         // GET: api/swaggerdiff
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SwaggerItem>>> GetSwaggerItems()
+        public async Task<ActionResult> GetSwaggerItems()
         {
-            // Get current list of each monitored web service and its Swagger API documentation JSON
-            List<SwaggerItem> swaggerItems = await _context.SwaggerItems.ToListAsync();
+            // Get list of contents from the document store
+            List<KeyValuePair<string, string>> documentStore = null;
 
-            // Return every instance of SwaggerItem we have stored in the in-memory DB
-            return Ok(swaggerItems);
+            await Task.Run(() => {
+                documentStore = _documentStoreService.GetDocumentStoreContents();
+            });
+
+            // Return all web-service documentation we currently have stored
+            return Ok(documentStore);
         }
 
-        // GET: api/swaggerdiff/:serviceName (Exposed Webhook URL)
-        [HttpGet("{serviceName}")]
-        [HttpPost("{serviceName}")]
-        public async Task<ActionResult> GetSwaggerItem(string serviceName)
+        // (GET | POST): api/swaggerdiff/:webServiceName (Exposed Webhook)
+        [HttpGet("{webServiceName}")]
+        [HttpPost("{webServiceName}")]
+        public async Task<ActionResult> GetSwaggerItem(string webServiceName)
         {
             // Check if webhook was called with valid service name
-            if (!_urlService.IsValidServiceName(serviceName))
+            if (!_initializationService.IsValidWebServiceName(webServiceName))
             {
                 // Create error response object
-                ErrorObject errorObject = new ErrorObject("invalid_service_name", $"Service name is not valid. Passed service name {serviceName}.");
+                ErrorObject errorObject = new ErrorObject("invalid_service_name", $"Web-Service name is not valid. Passed name: {webServiceName}.");
 
                 // Return 400 response status with 
                 return BadRequest(errorObject);
             }
 
-            // Get current instance of SwaggerItem for the corresponding service name
-            SwaggerItem swaggerItem = await _context.SwaggerItems.FindAsync(serviceName);
-
             // Get currently stored serialized JSON document for service (keyed on service name)
-            string previousJSON = swaggerItem.ServiceJSON;
+            string previousJSON = _documentStoreService.GetValue(webServiceName);
 
             // Fetch fresh swagger JSON document for service
             string freshJSON;
@@ -67,11 +72,12 @@ namespace SwaggerDiff.Controllers
             try 
             {
                 // Attempt to get fresh JSON via client API request
-                freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(serviceName);
+                freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
             }
-            catch(HttpRequestException error) {
+            catch(HttpRequestException error) 
+            {
                 // Log client request error
-                _logger.LogError($"Error fetching fresh Swagger documentation JSON file for '${serviceName}', ${error}");
+                _logger.LogError($"Error fetching fresh Swagger documentation JSON file for '${webServiceName}', ${error}");
 
                 // Return 500 status code
                 return StatusCode(500);
@@ -79,7 +85,7 @@ namespace SwaggerDiff.Controllers
 
             // Check if the fresh JSON document is identical to the previous one (using MD5 Hash comparison)
             // Note: this is a quick way to rule out any API documentation changes for this web service
-            if (_compareService.AreJSONDocumentsIdentical(previousJSON, freshJSON))
+            if (string.Equals(previousJSON, freshJSON))
             {
                 _logger.LogInformation("Previous and Fresh JSON files are identical, skipping additional checks.");
                 return Ok();
@@ -88,11 +94,8 @@ namespace SwaggerDiff.Controllers
             // We now know that the documentation has been updated, perform full suite of diff checks
             await _compareService.CheckServiceForApiChanges(previousJSON, freshJSON);
 
-            // Update in-memory DB with the fresh JSON document for service name
-            swaggerItem.ServiceJSON = freshJSON;
-
-            // Save fresh serialized json to to in-memory DB
-            await _context.SaveChangesAsync();
+            // Update document store with newest version of documentation for this web-service
+            _documentStoreService.SetValue(webServiceName, freshJSON);
 
             // Return success status code
             return Ok();
