@@ -12,7 +12,7 @@ namespace SwaggerDiff.Services
         // Injected services
         private readonly ILogger _logger;
 
-        // Thread-safe key-value pair for storing Swagger documentation files
+        // Thread-safe Dictionary for storing API documentation JSON files
         private readonly ConcurrentDictionary<string, string> _documentStore;
 
 

@@ -33,6 +33,7 @@ namespace SwaggerDiff.Controllers
             _documentStoreService = documentStoreService;
         }
 
+        // TODO: Remove this route
         // GET: api/swaggerdiff
         [HttpGet]
         public async Task<ActionResult> GetSwaggerItems()
@@ -53,7 +54,7 @@ namespace SwaggerDiff.Controllers
         [HttpPost("{webServiceName}")]
         public async Task<ActionResult> GetSwaggerItem(string webServiceName)
         {
-            // Check if webhook was called with valid service name
+            // Check if webhook was called with valid web-service name
             if (!_initializationService.IsValidWebServiceName(webServiceName))
             {
                 // Create error response object
@@ -63,10 +64,10 @@ namespace SwaggerDiff.Controllers
                 return BadRequest(errorObject);
             }
 
-            // Get currently stored serialized JSON document for service (keyed on service name)
+            // Get currently stored serialized JSON document for web-service (keyed on service name)
             string previousJSON = _documentStoreService.GetValue(webServiceName);
 
-            // Fetch fresh swagger JSON document for service
+            // Fetch fresh swagger JSON document for web-service
             string freshJSON;
 
             try 
@@ -83,8 +84,7 @@ namespace SwaggerDiff.Controllers
                 return StatusCode(500);
             }
 
-            // Check if the fresh JSON document is identical to the previous one (using MD5 Hash comparison)
-            // Note: this is a quick way to rule out any API documentation changes for this web service
+            // If documents are identical, short-circuit and do not perform diff checks
             if (string.Equals(previousJSON, freshJSON))
             {
                 _logger.LogInformation("Previous and Fresh JSON files are identical, skipping additional checks.");
