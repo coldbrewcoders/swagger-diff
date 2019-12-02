@@ -5,6 +5,6 @@ namespace SwaggerDiff.Services.Interfaces
 {
     public interface IClientRequestService
     {
-        Task<string> FetchServiceSwaggerJsonAsync(string requestUrl);
+        Task<string> FetchServiceSwaggerJsonAsync(string webServiceName);
     }
 }

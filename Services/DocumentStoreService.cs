@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SwaggerDiff.Services.Interfaces;
 
@@ -13,17 +14,15 @@ namespace SwaggerDiff.Services
         private readonly ILogger _logger;
 
         // Thread-safe Dictionary for storing API documentation JSON files
-        private readonly ConcurrentDictionary<string, string> _documentStore;
+        private readonly ConcurrentDictionary<string, string> _documentStore = new ConcurrentDictionary<string, string>();
 
 
         public DocumentStoreService(ILogger<DocumentStoreService> logger)
         {
             // Init injected services
             _logger = logger;
-
-            // init thread-safe document store
-            _documentStore = new ConcurrentDictionary<string, string>();
         }
+
 
         public string GetValue(string webServiceName)
         {
@@ -32,7 +31,10 @@ namespace SwaggerDiff.Services
                 return _documentStore[webServiceName];
             }
             catch (KeyNotFoundException) {
-                _logger.LogInformation($"No saved entry for web-service: ${webServiceName}.");
+
+                _logger.LogInformation($"No saved entry for web-service: ${webServiceName}. Attempting again to fetch initial API documentation for web-service...");
+
+                // Return empty string so that controller knows to short-circuit
                 return "";
             }
         }
@@ -49,19 +51,7 @@ namespace SwaggerDiff.Services
                 _logger.LogInformation("Could not add file to document store for null key.");
             }
         }
-
-        public List<KeyValuePair<string, string>> GetDocumentStoreContents()
-        {
-            // Create a list of key-value pairs
-            var documentStoreContents = new List<KeyValuePair<string, string>>();
-
-            // Iterate over keys in document store, create a list of key-value pairs
-            foreach(string key in _documentStore.Keys)
-            {
-                documentStoreContents.Add(new KeyValuePair<string, string>(key, _documentStore[key]));
-            }
-
-            return documentStoreContents;
-        }
     }
 }
+
+// TODO: Add indexer on this class for geting and seting values

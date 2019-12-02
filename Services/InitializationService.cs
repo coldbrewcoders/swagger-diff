@@ -12,7 +12,6 @@ namespace SwaggerDiff.Services
     {
         // Injected services
         private readonly ILogger _logger;
-        private readonly IUrlService _urlService;
         private readonly IClientRequestService _clientRequestService;
         private readonly IDocumentStoreService _documentStoreService;
 
@@ -20,11 +19,10 @@ namespace SwaggerDiff.Services
         private readonly HashSet<string> WebServiceNames;
 
 
-        public InitializationService(IUrlService urlService, IClientRequestService clientRequestService, IDocumentStoreService documentStoreService, ILogger<InitializationService> logger)
+        public InitializationService(IClientRequestService clientRequestService, IDocumentStoreService documentStoreService, ILogger<InitializationService> logger)
         {
             // Init Services
             _logger = logger;
-            _urlService = urlService;
             _clientRequestService = clientRequestService;
             _documentStoreService = documentStoreService;
 
@@ -63,6 +61,22 @@ namespace SwaggerDiff.Services
             });
 
             _logger.LogInformation("Successfully loaded documentation for all web-services.");
+        }
+
+        public async Task ReattemptDocumentFetch(string webServiceName)
+        {
+            if (IsValidWebServiceName(webServiceName))
+            {
+                // Attempt again to get API documentation for web-service
+                string freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
+
+                // If we are successful in fetching API documentation..
+                if (!string.Equals(freshJSON, string.Empty))
+                {
+                    // Put fresh API documentation JSON in document store
+                    _documentStoreService.SetValue(webServiceName, freshJSON);
+                }
+            }
         }
     }
 }

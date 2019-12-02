@@ -17,36 +17,18 @@ namespace SwaggerDiff.Controllers
         // Injected services
         private readonly ILogger _logger;
         private readonly IInitializationService _initializationService;
-        private readonly IUrlService _urlService;
         private readonly IClientRequestService _clientRequestService;
         private readonly ICompareService _compareService;
         private readonly IDocumentStoreService _documentStoreService;
 
 
-        public SwaggerDiffController(ILogger<SwaggerDiffController> logger, IInitializationService initializationService, IUrlService urlService, IClientRequestService clientRequestService, ICompareService compareService, IDocumentStoreService documentStoreService)
+        public SwaggerDiffController(ILogger<SwaggerDiffController> logger, IInitializationService initializationService, IClientRequestService clientRequestService, ICompareService compareService, IDocumentStoreService documentStoreService)
         {
             _logger = logger;
             _initializationService = initializationService;
-            _urlService = urlService;
             _clientRequestService = clientRequestService;
             _compareService = compareService;
             _documentStoreService = documentStoreService;
-        }
-
-        // TODO: Remove this route
-        // GET: api/swaggerdiff
-        [HttpGet]
-        public async Task<ActionResult> GetSwaggerItems()
-        {
-            // Get list of contents from the document store
-            List<KeyValuePair<string, string>> documentStore = null;
-
-            await Task.Run(() => {
-                documentStore = _documentStoreService.GetDocumentStoreContents();
-            });
-
-            // Return all web-service documentation we currently have stored
-            return Ok(documentStore);
         }
 
         // (GET | POST): api/swaggerdiff/:webServiceName (Exposed Webhook)
@@ -67,21 +49,30 @@ namespace SwaggerDiff.Controllers
             // Get currently stored serialized JSON document for web-service (keyed on service name)
             string previousJSON = _documentStoreService.GetValue(webServiceName);
 
-            // Fetch fresh swagger JSON document for web-service
-            string freshJSON;
-
-            try 
+            // If no previous JSON document found, short-circuit
+            if (string.Equals(string.Empty, previousJSON))
             {
-                // Attempt to get fresh JSON via client API request
-                freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
+                // Reattempt to load Swagger documentation for this web-service (previous request must have failed)
+                await _initializationService.ReattemptDocumentFetch(webServiceName);
+
+                // Create error response object
+                ErrorObject errorObject = new ErrorObject("no_previous_json", $"No stored API documentation for web-service: {webServiceName}.");
+
+                // Return 400 response status with 
+                return BadRequest(errorObject);
             }
-            catch(HttpRequestException error) 
-            {
-                // Log client request error
-                _logger.LogError($"Error fetching fresh Swagger documentation JSON file for '${webServiceName}', ${error}");
 
-                // Return 500 status code
-                return StatusCode(500);
+            // Attempt to get fresh JSON via client API request
+            string freshJSON = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
+  
+            // Verify that we were able to fetch fresh API documentation for web-service
+            if (string.Equals(string.Empty, freshJSON))
+            {
+                // Create error response object
+                ErrorObject errorObject = new ErrorObject("no_fresh_json", $"An error occurred while fetching new API documentation for web-service: {webServiceName}.");
+
+                // Return 400 response status with 
+                return BadRequest(errorObject);
             }
 
             // If documents are identical, short-circuit and do not perform diff checks

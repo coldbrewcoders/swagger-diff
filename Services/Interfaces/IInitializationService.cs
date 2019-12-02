@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 
 namespace SwaggerDiff.Services.Interfaces
 {
@@ -5,5 +6,6 @@ namespace SwaggerDiff.Services.Interfaces
     {
         void Initialize();
         bool IsValidWebServiceName(string serviceName);
+        Task ReattemptDocumentFetch(string webServiceName);
     }
 }

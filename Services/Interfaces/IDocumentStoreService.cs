@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 
 namespace SwaggerDiff.Services.Interfaces
 {
@@ -7,6 +5,5 @@ namespace SwaggerDiff.Services.Interfaces
     {
         string GetValue(string webServiceName);
         void SetValue(string webServiceName, string documentationJson);
-        List<KeyValuePair<string, string>> GetDocumentStoreContents();
     }
 }

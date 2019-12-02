@@ -38,7 +38,6 @@ namespace SwaggerDiff.Models
             RemovedRoutesAndHttpMethods[route].Add(httpMethod);
         }
 
-        // TODO: Remove method
         public void LogDiffReport()
         {
             Console.WriteLine("\n\n\n *** Diff Report *** \n");
