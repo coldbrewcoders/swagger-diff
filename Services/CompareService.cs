@@ -1,33 +1,64 @@
-using System;
 using System.Text;
 using System.IO;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using SwaggerDiff.Models;
+using SwaggerDiff.Services.Interfaces;
+
+
+/*******************************************
+*
+* Terms:
+*   'Route' -> /url/to/endpoint/{routeParam}
+*   'HTTP Method': GET, PUT, POST, etc...
+*   'API Endpoint' -> Combination of an HTTP method and route (<HTTP METHOD> </ROUTE>)
+*       Ex. GET /users/info/{userId}
+*
+*******************************************/
 
 
 namespace SwaggerDiff.Services
 {
     public class CompareService : ICompareService
     {
-        private readonly ILogger _logger;
+        // Injected services
+        private readonly IClientRequestService _clientRequestService;
 
-        public CompareService(ILogger<CompareService> logger)
+
+        public CompareService(IClientRequestService clientRequestService) 
         {
-            _logger = logger;
+            _clientRequestService = clientRequestService;
         }
 
-        private string GetJsonMD5Hash(MD5 md5Hash, string str)
-        {   
-            // Get the MD5 hash of serialized JSON document as a byte array
-            byte[] byteArray = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(str));
 
-            // Convert byte array to string and return value
-            return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
+        public async Task CheckServiceForApiChanges(string webServiceName, string previousApiDocumentJSON, string freshApiDocumentJSON)
+        {
+            // Convert serialized JSON swagger definition into instances of OpenApiDocuments
+            OpenApiDocument previousApiDocument = GetDeserializedJsonAsOpenApiDocument(previousApiDocumentJSON);
+            OpenApiDocument freshApiDocument = GetDeserializedJsonAsOpenApiDocument(freshApiDocumentJSON);
+
+            // Create instance of DiffReport class to store API changes
+            DiffReport diffReport = new DiffReport(webServiceName);
+
+            // Create array of tasks
+            Task[] tasks = new Task[] {
+                CheckForApiRouteAndHttpMethodAdditions(previousApiDocument, freshApiDocument, diffReport),
+                CheckForApiRouteAndHttpMethodRemovals(previousApiDocument, freshApiDocument, diffReport)
+            };
+
+            // Run all tasks in parallell
+            await Task.WhenAll(tasks);
+
+            // Get slack message JSON from diff report
+            JObject slackMessage = diffReport.GenerateSlackMessageContent();
+
+            // Make Client request to post slack message
+            _clientRequestService.SendSlackMessage(diffReport.WebServiceName, slackMessage);
         }
+
 
         private OpenApiDocument GetDeserializedJsonAsOpenApiDocument(string str)
         {
@@ -41,137 +72,165 @@ namespace SwaggerDiff.Services
             return new OpenApiStreamReader().Read(stream, out var diagnostic);
         }
 
-        public bool AreJSONDocumentsIdentical(string previousJSON, string freshJSON)
+        private async Task CheckForApiRouteAndHttpMethodAdditions(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
         {
-            using (MD5 md5Hash = MD5.Create())
-            {
-                // Generate MD5 hashes of two passed serialized JSON documents
-                string previousJsonHash = this.GetJsonMD5Hash(md5Hash, previousJSON);
-                string freshJSONHash = this.GetJsonMD5Hash(md5Hash, freshJSON);
+            // Get information for all routes in previous API documentation
+            OpenApiPaths previousApiDocumentRoutes = previousApiDocument.Paths;
 
-                // Compare hash values. If identical, we need no additional checks because document JSON document has not changed
-                if (previousJsonHash == freshJSONHash) 
-                {
-                    return true;
-                }
-                
-                return false;
-            }
-        }
+            // Get information for all routes in fresh API documentation
+            OpenApiPaths freshApiDocumentRoutes = freshApiDocument.Paths;
 
-        public async Task CheckServiceForApiChanges(string previousJSON, string freshJSON)
-        {
-            // Convert serialized JSON swagger definition into instances of OpenApiDocuments
-            OpenApiDocument previousApi = GetDeserializedJsonAsOpenApiDocument(previousJSON);
-            OpenApiDocument freshApi = GetDeserializedJsonAsOpenApiDocument(freshJSON);
-
-            // Create array of tasks
-            Task[] tasks = new Task[] {
-                CheckForApiRouteAndHttpMethodAdditions(previousApi, freshApi),
-                CheckForApiRouteAndHttpMethodRemovals(previousApi, freshApi)
-            };
-
-            // Run all tasks in parallell
-            await Task.WhenAll(tasks);
-        }
-
-
-
-        /*** Async Comparison Methods ***/
-        //  TERMS:
-        //
-        //  'Paths' -> Unique API Routes
-        //  'Operations' -> Unique HTTP method for an API Route
-        // 
-
-        private async Task CheckForApiRouteAndHttpMethodAdditions(OpenApiDocument previousApi, OpenApiDocument freshApi)
-        {
-            _logger.LogInformation("Checking for API Route and HTTP Method Additions");
-
-            // Get previous API routes
-            OpenApiPaths previousApiRoutes = previousApi.Paths;
-
-            // Get fresh API routes
-            OpenApiPaths freshPaths = freshApi.Paths;
-
-            // Iterate over API routes from fresh documentation
-            foreach(KeyValuePair<string, OpenApiPathItem> path in freshPaths)
+            // Iterate over all routes in freshly downloaded API documentation
+            foreach(KeyValuePair<string, OpenApiPathItem> route in freshApiDocumentRoutes)
             {
                 // Find current API route as string
-                string currentApiRoute = path.Key;
+                string currentApiRoute = route.Key;
 
-                // Check if this API route existed in previous documentation
-                if(!previousApiRoutes.ContainsKey(currentApiRoute))
+                // Check if this route in the fresh API documentation in a new addition
+                if(!previousApiDocumentRoutes.ContainsKey(currentApiRoute))
                 {
-                    // There is a new API route
-                    _logger.LogInformation($"New API Route: '{currentApiRoute}'");
+                    // NOTE: New route detected, therefore all HTTP methods associated with this route are new
 
-                    // Find new API route values
-                    OpenApiPathItem newApiRouteValue = path.Value;
-
+                    // Find all HTTP methods associated with this route (HTTP methods represented as enum type OpenApi.Models.OperationType)
+                    OpenApiPathItem newApiRouteValue = route.Value;
                     IDictionary<OperationType, OpenApiOperation> newApiRouteHttpMethodsDict = newApiRouteValue.Operations;
 
-                    // Check if the endpoint item has HTTP methods (endpoint is new so all HTTP methods are new)
+                    // Verify route has associated HTTP methods
                     if(newApiRouteHttpMethodsDict.Count > 0)
                     {
-                        // New API route has Operations. Since API route is new, all HTTP methods are also new
+                        // Get list of all HTTP methods associated with this new route
                         IList<OperationType> newApiRouteHttpMethodTypes = new List<OperationType>(newApiRouteHttpMethodsDict.Keys);
 
-                        // Iterate through the HTTP methods for the new API route
+                        // Iterate through the new route's HTTP methods
                         foreach(OperationType newApiRouteHttpMethod in newApiRouteHttpMethodTypes)
                         {
-                            // List each HTTP method for new route
-                            _logger.LogInformation($"New HTTP Method: '{newApiRouteHttpMethod.ToString()}' for New Route: {currentApiRoute}");
+                            // Save added route/HTTP method information for API diff report
+                            diffReport.RecordAddedRouteInformation(currentApiRoute, newApiRouteHttpMethod);
                         }
                     }
                 }
                 else
                 {
-                    // Previous API documentation already has this API route, check if there are any new HTTP methods for existing route
+                    // Previous API documentation already has this API route, check if there are any new HTTP methods for the existing route
                     
-                    // Get dictionary of HTTP methods of current API route from fresh documentation
-                    OpenApiPathItem freshApiRouteValue = path.Value;
-                    IDictionary<OperationType, OpenApiOperation> freshApiRouteHttpMethodsDict = freshApiRouteValue.Operations;
+                    // Get dictionary of HTTP methods for current route from fresh API documentation
+                    OpenApiPathItem freshApiDocumentRouteValue = route.Value;
+                    IDictionary<OperationType, OpenApiOperation> freshApiDocumentRouteInfo = freshApiDocumentRouteValue.Operations;
 
-                    // Get dictionary of HTTP methods of current API route from previous documentation
-                    OpenApiPathItem previousApiRouteValue = previousApiRoutes[currentApiRoute];
-                    IDictionary<OperationType, OpenApiOperation> previousApiRouteHttpMethodsDict = previousApiRouteValue.Operations;
+                    // Get dictionary of HTTP methods for current route from previous API documentation
+                    OpenApiPathItem previousApiDocumentRouteValue = previousApiDocumentRoutes[currentApiRoute];
+                    IDictionary<OperationType, OpenApiOperation> previousApiDocumentRouteInfo = previousApiDocumentRouteValue.Operations;
                     
-                    // Verify that fresh documentation for this route has HTTP methods
-                    if(freshApiRouteHttpMethodsDict.Count > 0)
+                    // Verify that fresh API documentation for this route contains HTTP methods
+                    if(freshApiDocumentRouteInfo.Count > 0)
                     {
-                        // Get list of HTTP methods from fresh documentation of this API route
-                        IList<OperationType> freshApiRouteHttpMethods = new List<OperationType>(freshApiRouteHttpMethodsDict.Keys);
+                        // For this route, get list of HTTP methods in fresh API documentation
+                        IList<OperationType> freshApiRouteHttpMethods = new List<OperationType>(freshApiDocumentRouteInfo.Keys);
 
-                        // Get list of HTTP methods from previous documentation of this API route
-                        IList<OperationType> previousApiRouteHttpMethods = new List<OperationType>(previousApiRouteHttpMethodsDict.Keys);
+                        // For this route, get list of HTTP methods in previous API documentation
+                        IList<OperationType> previousApiRouteHttpMethods = new List<OperationType>(previousApiDocumentRouteInfo.Keys);
 
+                        // Iterate over all HTTP methods listed in fresh API documentation for this route
                         foreach(OperationType freshHttpMethod in freshApiRouteHttpMethods)
                         {
+                            // For this route, if an HTTP method exists in fresh API documentation but not previous API documentation,
+                            // We have found a new API endpoint
                             if(!previousApiRouteHttpMethods.Contains(freshHttpMethod))
                             {
-                                _logger.LogInformation($"New HTTP Method: '{freshHttpMethod.ToString()}' for Existing Route: '{currentApiRoute}'");
+                                // Record newly detected API endpoint in diff report object
+                                diffReport.RecordAddedRouteInformation(currentApiRoute, freshHttpMethod);
                             }
                         }
                     }
-
                 }
             }
 
+            // FIXME: Figure out how to not use this hack
             await Task.Delay(1); 
         }
 
-        private async Task CheckForApiRouteAndHttpMethodRemovals(OpenApiDocument previousApi, OpenApiDocument freshApi)
+        private async Task CheckForApiRouteAndHttpMethodRemovals(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
         {
-            _logger.LogInformation("Checking for API Route and HTTP Method Removals");
+            // Get information for all routes in previous API documentation
+            OpenApiPaths previousApiDocumentRoutes = previousApiDocument.Paths;
 
-            // Get previous API routes
-            OpenApiPaths previousPaths = previousApi.Paths;
+            // Get information for all routes in fresh API documentation
+            OpenApiPaths freshApiDocumentRoutes = freshApiDocument.Paths;
 
-            // Get fresh API routes
-            OpenApiPaths freshPaths = freshApi.Paths;
+            // Iterate over all routes in previously stored API documentation
+            foreach(KeyValuePair<string, OpenApiPathItem> route in previousApiDocumentRoutes)
+            {
+                // Find current API route as string
+                string currentApiRoute = route.Key;
 
+                // Check if this route in the previously downloaded API documentation has been removed
+                if(!freshApiDocumentRoutes.ContainsKey(currentApiRoute))
+                {
+                    // NOTE: This route has been removed, therefore all HTTP methods associated with this route have been removed
+
+                    // Find all HTTP methods associated with this route (HTTP methods represented as enum type OpenApi.Models.OperationType)
+                    OpenApiPathItem removedApiRouteValue = route.Value;
+                    IDictionary<OperationType, OpenApiOperation> removedApiRouteHttpMethodsDict = removedApiRouteValue.Operations;
+
+                    // Verify route has associated HTTP methods
+                    if(removedApiRouteHttpMethodsDict.Count > 0)
+                    {
+                        // Get list of all HTTP methods associated with this removed route
+                        IList<OperationType> removedApiRouteHttpMethodTypes = new List<OperationType>(removedApiRouteHttpMethodsDict.Keys);
+
+                        // Iterate through the removed route's HTTP methods
+                        foreach(OperationType removedApiRouteHttpMethod in removedApiRouteHttpMethodTypes)
+                        {
+                            // Save removed route/HTTP method information for API diff report
+                            diffReport.RecordRemovedRouteInformation(currentApiRoute, removedApiRouteHttpMethod);
+                        }
+                    }
+                }
+                else
+                {
+                    // New API documentation has this route, check if any HTTP methods have been removed
+
+                    // Get dictionary of HTTP methods for current route from previous API documentation
+                    OpenApiPathItem previousApiDocumentRouteValue = route.Value;
+                    IDictionary<OperationType, OpenApiOperation> previousApiDocumentRouteInfo = previousApiDocumentRouteValue.Operations;
+
+                    // Get dictionary of HTTP methods for current API route from fresh API documentation
+                    OpenApiPathItem freshApiRouteValue = freshApiDocumentRoutes[currentApiRoute];
+                    IDictionary<OperationType, OpenApiOperation> freshApiDocumentRouteInfo = freshApiRouteValue.Operations;
+
+                    // Verify that previous API documentation for this route contains HTTP methods
+                    if(previousApiDocumentRouteInfo.Count > 0)
+                    {
+                        // For this route, get list of HTTP methods in previous API documentation
+                        IList<OperationType> previousApiRouteHttpMethods = new List<OperationType>(previousApiDocumentRouteInfo.Keys);
+
+                        // For this route, get list of HTTP methods in fresh API documentation
+                        IList<OperationType> freshApiRouteHttpMethods = new List<OperationType>(freshApiDocumentRouteInfo.Keys);
+
+                        // Iterate over all HTTP methods listted in previous API documentation for this route 
+                        foreach(OperationType previousHttpMethod in previousApiRouteHttpMethods)
+                        {
+                            // For this route, if an HTTP method exists in previous API documentation but not fresh API documentation,
+                            // We have detected the removal of an API endpoint
+                            if(!freshApiRouteHttpMethods.Contains(previousHttpMethod))
+                            {
+                                // Record removal of API endpoint in diff report object
+                                diffReport.RecordRemovedRouteInformation(currentApiRoute, previousHttpMethod);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // FIXME: Figure out how to not use this hack
             await Task.Delay(1); 
         }
+
+
+
+        // TODO: Add additional checks for endpoints that exist in previous and fresh documentation
+        // * On PUT, POST, PATCH and DELETE, check for request payload format changes
+        // * On GET, POST, PUT, PATCH and DELETE, check for response payload format changes
+        // * On all HTTP methods, check for query string changes
     }
 }

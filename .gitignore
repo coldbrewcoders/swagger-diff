@@ -412,4 +412,4 @@ obj/
 node_modules/
 
 # Local envirement variables
-#.env
+.env
