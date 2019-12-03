@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 
@@ -7,11 +9,20 @@ namespace SwaggerDiff.Models
 {
     public class DiffReport
     {
+        // Name of web-service associated with diff-report 
+        public string WebServiceName;
+
         // New Routes and all HTTP methods belonging to new route
         private Dictionary<string, List<OperationType>> NewRoutesAndHttpMethods = new Dictionary<string, List<OperationType>>();
 
         // Removed Routes and all HTTP methods removed from route
         private Dictionary<string, List<OperationType>> RemovedRoutesAndHttpMethods = new Dictionary<string, List<OperationType>>();
+
+
+        public DiffReport(string webServiceName)
+        {
+            WebServiceName = webServiceName;
+        }
 
 
         public void RecordAddedRouteInformation(string route, OperationType httpMethod)
@@ -38,67 +49,63 @@ namespace SwaggerDiff.Models
             RemovedRoutesAndHttpMethods[route].Add(httpMethod);
         }
 
-        public void LogDiffReport()
+        public JObject GenerateSlackMessageContent()
         {
-            Console.WriteLine("\n\n\n *** Diff Report *** \n");
+            // Use LINQ to create a list of { title, value } anonymous types
+            var endpointsAdded = NewRoutesAndHttpMethods.SelectMany(x => x.Value, (route, httpMethod) => new {
+                title = $"{HttpMethodsEnumToString(httpMethod)}: {route.Key}",
+                value = "Added",
+                @short = false
+            }).ToList();
 
-            // If no endpoint changes detected...
-            if(NumberOfRouteChanges() == 0) {
-                Console.WriteLine("No API Changes Detected.\n\n");
-                return;
-            }
+            // Use LINQ to create a list of { title, value } anonymous types
+            var endpointsRemoved = RemovedRoutesAndHttpMethods.SelectMany(x => x.Value, (route, httpMethod) => new {
+                title = $"{HttpMethodsEnumToString(httpMethod)}: {route.Key}",
+                value = "Removed",
+                @short = false
+            }).ToList();
 
-            // If endpoint addition(s) detected..
-            if(NumberOfRoutesAdded() > 0)
-            {
-                Console.WriteLine("Added Routes:");
-
-                foreach(string route in NewRoutesAndHttpMethods.Keys)
-                {
-                    foreach(OperationType httpMethod in NewRoutesAndHttpMethods[route])
-                    {
-                        Console.WriteLine($"\t Added {HttpMethodsEnumToString(httpMethod)}: {route}");
+            // Combine lists Of added and removed endpoints
+            var fieldsList = endpointsAdded.Concat(endpointsRemoved);
+            
+            // Create Json Object to represent slack message
+            JObject slackMessage = JObject.FromObject(new {
+                attachments = new[] {
+                    new {
+                        title = $"API Change Detected: {WebServiceName}",
+                        color = $"{((NumberOfRoutesRemoved() > 0) ? "danger" : "good")}",
+                        fields = fieldsList,
+                        footer = "Swagger Diff",
+                        ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
                     }
                 }
+            });
 
-                Console.WriteLine("\n\n");
-            }
-
-            // If endpoint removal(s) detected...
-            if(NumberOfRoutesRemoved() > 0)
-            {
-                Console.WriteLine("Removed Routes:");
-
-                foreach(string route in RemovedRoutesAndHttpMethods.Keys)
-                {
-                    foreach(OperationType httpMethod in RemovedRoutesAndHttpMethods[route])
-                    {
-                        Console.WriteLine($"\t Removed {HttpMethodsEnumToString(httpMethod)}: {route}");
-                    }
-                }
-
-                Console.WriteLine("\n\n");
-            }
+            return slackMessage;
         }
         
 
         private string HttpMethodsEnumToString(OperationType httpMethod)
         {
+            // Convert OpenApi.Models.OperationType enum to uppercase string
             return httpMethod.ToString().ToUpper();
         }
 
-        private int NumberOfRouteChanges()
+        public int NumberOfRouteChanges()
         {
+            // Total number of route changes (Added and Removed)
             return NewRoutesAndHttpMethods.Keys.Count + RemovedRoutesAndHttpMethods.Keys.Count;
         }
 
         private int NumberOfRoutesAdded()
         {
+            // Number of routes added 
             return NewRoutesAndHttpMethods.Keys.Count;
         }
 
         private int NumberOfRoutesRemoved()
-        {
+        {   
+            // Number of routes removed
             return RemovedRoutesAndHttpMethods.Keys.Count;
         }
     }

@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,6 +27,7 @@ namespace SwaggerDiff.Controllers
             _compareService = compareService;
             _documentStoreService = documentStoreService;
         }
+
 
         // (GET | POST): api/swaggerdiff/:webServiceName (Exposed Webhook)
         [HttpGet("{webServiceName}")]
@@ -83,7 +81,7 @@ namespace SwaggerDiff.Controllers
             }
 
             // We now know that the documentation has been updated, perform full suite of diff checks
-            await _compareService.CheckServiceForApiChanges(previousJSON, freshJSON);
+            await _compareService.CheckServiceForApiChanges(webServiceName, previousJSON, freshJSON);
 
             // Update document store with newest version of documentation for this web-service
             _documentStoreService.SetValue(webServiceName, freshJSON);

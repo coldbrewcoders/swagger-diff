@@ -1,27 +1,22 @@
 {
-  "attachments": [
-      {
-          "title": "Breaking API change detected in Utility service.",
-          "title_link": "https://dev.templummarkets.com/api/swagger/?urls.primaryName=Utility#/Investment/get_asset_types",
-          "fallback": "Breaking API change detected in Utility service.",
-          "color": "danger",
-          "fields": [
-              {
-                  "title": "GET:  /test/{userId}",
-                  "short": false
-              },
-              {
-                  "title": "Response",
-                  "value": "userId  →  id",
-                  "short": false
-              },
-              {
-                  "value": "userName  →  name",
-                  "short": false
-              }
-          ],
-          "footer": "Swagger Diff",
-          "ts": 478384
-      }
-  ]
+    "attachments": [
+        {
+            "title": "Change detected in web-service: admin",
+            "color": "danger",
+            "fields": [
+                {
+                    "title": "GET: /test/{userId}",
+                    "value": "Removed",
+                    "short": false
+                },
+                {
+                    "title": "GET: /test/{userId}",
+                    "value": "Added",
+                    "short": false
+                }
+            ],
+            "footer": "Swagger Diff",
+            "ts": 478384
+        }
+    ]
 }

@@ -5,6 +5,6 @@ namespace SwaggerDiff.Services.Interfaces
 {
     public interface ICompareService
     {
-        Task CheckServiceForApiChanges(string previousJSON, string freshJSON);
+        Task CheckServiceForApiChanges(string webServiceName, string previousJSON, string freshJSON);
     }
 }

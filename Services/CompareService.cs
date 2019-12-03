@@ -1,5 +1,6 @@
 using System.Text;
 using System.IO;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
@@ -8,29 +9,39 @@ using SwaggerDiff.Models;
 using SwaggerDiff.Services.Interfaces;
 
 
+/*******************************************
+*
+* Terms:
+*   'Route' -> /url/to/endpoint/{routeParam}
+*   'HTTP Method': GET, PUT, POST, etc...
+*   'API Endpoint' -> Combination of an HTTP method and route (<HTTP METHOD> </ROUTE>)
+*       Ex. GET /users/info/{userId}
+*
+*******************************************/
+
+
 namespace SwaggerDiff.Services
 {
     public class CompareService : ICompareService
     {
-        /*******************************************
-        *
-        * Terms:
-        *   'Route' -> /url/to/endpoint/{routeParam}
-        *   'HTTP Method': GET, PUT, POST, etc...
-        *   'API Endpoint' -> Combination of an HTTP method and route (<HTTP METHOD> </ROUTE>)
-        *       Ex. GET /users/info/{userId}
-        *
-        *******************************************/
+        // Injected services
+        private readonly IClientRequestService _clientRequestService;
 
 
-        public async Task CheckServiceForApiChanges(string previousApiDocumentJSON, string freshApiDocumentJSON)
+        public CompareService(IClientRequestService clientRequestService) 
+        {
+            _clientRequestService = clientRequestService;
+        }
+
+
+        public async Task CheckServiceForApiChanges(string webServiceName, string previousApiDocumentJSON, string freshApiDocumentJSON)
         {
             // Convert serialized JSON swagger definition into instances of OpenApiDocuments
             OpenApiDocument previousApiDocument = GetDeserializedJsonAsOpenApiDocument(previousApiDocumentJSON);
             OpenApiDocument freshApiDocument = GetDeserializedJsonAsOpenApiDocument(freshApiDocumentJSON);
 
             // Create instance of DiffReport class to store API changes
-            DiffReport diffReport = new DiffReport();
+            DiffReport diffReport = new DiffReport(webServiceName);
 
             // Create array of tasks
             Task[] tasks = new Task[] {
@@ -41,10 +52,11 @@ namespace SwaggerDiff.Services
             // Run all tasks in parallell
             await Task.WhenAll(tasks);
 
-            // Log report of documentation diff
-            diffReport.LogDiffReport();
+            // Get slack message JSON from diff report
+            JObject slackMessage = diffReport.GenerateSlackMessageContent();
 
-            // TODO: Instead of logging diff, send slack message
+            // Make Client request to post slack message
+            _clientRequestService.SendSlackMessage(diffReport.WebServiceName, slackMessage);
         }
 
 
@@ -133,7 +145,7 @@ namespace SwaggerDiff.Services
                 }
             }
 
-            // FIXME: Figure out way how not use this hack
+            // FIXME: Figure out how to not use this hack
             await Task.Delay(1); 
         }
 
@@ -210,9 +222,11 @@ namespace SwaggerDiff.Services
                 }
             }
 
-            // FIXME: Figure out way how not use this hack
+            // FIXME: Figure out how to not use this hack
             await Task.Delay(1); 
         }
+
+
 
         // TODO: Add additional checks for endpoints that exist in previous and fresh documentation
         // * On PUT, POST, PATCH and DELETE, check for request payload format changes
