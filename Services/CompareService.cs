@@ -45,8 +45,8 @@ namespace SwaggerDiff.Services
 
             // Create array of tasks
             Task[] tasks = new Task[] {
-                CheckForApiRouteAndHttpMethodAdditions(previousApiDocument, freshApiDocument, diffReport),
-                CheckForApiRouteAndHttpMethodRemovals(previousApiDocument, freshApiDocument, diffReport)
+                Task.Run(() => CheckForApiRouteAndHttpMethodAdditions(previousApiDocument, freshApiDocument, diffReport)),
+                Task.Run(() => CheckForApiRouteAndHttpMethodRemovals(previousApiDocument, freshApiDocument, diffReport))
             };
 
             // Run all tasks in parallell
@@ -72,7 +72,9 @@ namespace SwaggerDiff.Services
             return new OpenApiStreamReader().Read(stream, out var diagnostic);
         }
 
-        private async Task CheckForApiRouteAndHttpMethodAdditions(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
+
+        /** API document comparison checks **/
+        private void CheckForApiRouteAndHttpMethodAdditions(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
         {
             // Get information for all routes in previous API documentation
             OpenApiPaths previousApiDocumentRoutes = previousApiDocument.Paths;
@@ -146,10 +148,10 @@ namespace SwaggerDiff.Services
             }
 
             // FIXME: Figure out how to not use this hack
-            await Task.Delay(1); 
+            //await Task.Delay(1); 
         }
 
-        private async Task CheckForApiRouteAndHttpMethodRemovals(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
+        private void CheckForApiRouteAndHttpMethodRemovals(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
         {
             // Get information for all routes in previous API documentation
             OpenApiPaths previousApiDocumentRoutes = previousApiDocument.Paths;
@@ -221,11 +223,7 @@ namespace SwaggerDiff.Services
                     }
                 }
             }
-
-            // FIXME: Figure out how to not use this hack
-            await Task.Delay(1); 
         }
-
 
 
         // TODO: Add additional checks for endpoints that exist in previous and fresh documentation
