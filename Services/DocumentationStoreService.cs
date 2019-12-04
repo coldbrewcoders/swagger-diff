@@ -1,23 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SwaggerDiff.Services.Interfaces;
 
 
 namespace SwaggerDiff.Services
 {
-    public class DocumentStoreService: IDocumentStoreService
+    public class DocumentationStoreService: IDocumentationStoreService
     {
         // Injected services
         private readonly ILogger _logger;
 
         // Thread-safe Dictionary for storing API documentation JSON files
-        private readonly ConcurrentDictionary<string, string> _documentStore = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, string> _documentationStore = new ConcurrentDictionary<string, string>();
 
 
-        public DocumentStoreService(ILogger<DocumentStoreService> logger)
+        public DocumentationStoreService(ILogger<DocumentationStoreService> logger)
         {
             // Init injected services
             _logger = logger;
@@ -28,7 +27,7 @@ namespace SwaggerDiff.Services
         {
             try {
                 // Get Swagger documentation file from document store for a web-service
-                return _documentStore[webServiceName];
+                return _documentationStore[webServiceName];
             }
             catch (KeyNotFoundException) {
 
@@ -44,7 +43,7 @@ namespace SwaggerDiff.Services
             try 
             {
                 // Add/Update Swagger documentation file for a web-service
-                _documentStore[webServiceName] = documentationJson;
+                _documentationStore[webServiceName] = documentationJson;
             }
             catch (ArgumentNullException) 
             {

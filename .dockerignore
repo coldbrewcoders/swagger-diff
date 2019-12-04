@@ -1,0 +1,10 @@
+__testing__
+.dockerignore
+TODO.txt
+.env
+.git
+.gitignore
+.vs
+.vscode
+*/bin
+*/obj

@@ -16,3 +16,15 @@ Extras:
 * Allow for specific API version for each web-service
 * Write unit tests for services (figure out framework and strategy)
 
+
+Docker:
+* Figure out what the unknown docker params in the commented section of docker file mean
+
+* Create CBC Docker Hub Account
+* Add container to CBC Docker Hub account
+
+// Build container
+docker build --tag swaggerdiff .
+
+// Run container
+docker run -p 8000:80 --env-file .env swaggerdiff

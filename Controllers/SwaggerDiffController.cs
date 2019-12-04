@@ -16,16 +16,16 @@ namespace SwaggerDiff.Controllers
         private readonly IInitializationService _initializationService;
         private readonly IClientRequestService _clientRequestService;
         private readonly ICompareService _compareService;
-        private readonly IDocumentStoreService _documentStoreService;
+        private readonly IDocumentationStoreService _documentationStoreService;
 
 
-        public SwaggerDiffController(ILogger<SwaggerDiffController> logger, IInitializationService initializationService, IClientRequestService clientRequestService, ICompareService compareService, IDocumentStoreService documentStoreService)
+        public SwaggerDiffController(ILogger<SwaggerDiffController> logger, IInitializationService initializationService, IClientRequestService clientRequestService, ICompareService compareService, IDocumentationStoreService documentationStoreService)
         {
             _logger = logger;
             _initializationService = initializationService;
             _clientRequestService = clientRequestService;
             _compareService = compareService;
-            _documentStoreService = documentStoreService;
+            _documentationStoreService = documentationStoreService;
         }
 
 
@@ -45,9 +45,9 @@ namespace SwaggerDiff.Controllers
             }
 
             // Get currently stored serialized JSON document for web-service (keyed on service name)
-            string previousJSON = _documentStoreService.GetValue(webServiceName);
+            string previousJSON = _documentationStoreService.GetValue(webServiceName);
 
-            // If no previous JSON document found, short-circuit
+            // If no previous JSON document found, re-attempt to fetch the web service documentation
             if (string.Equals(string.Empty, previousJSON))
             {
                 // Reattempt to load Swagger documentation for this web-service (previous request must have failed)
@@ -84,7 +84,7 @@ namespace SwaggerDiff.Controllers
             await _compareService.CheckServiceForApiChanges(webServiceName, previousJSON, freshJSON);
 
             // Update document store with newest version of documentation for this web-service
-            _documentStoreService.SetValue(webServiceName, freshJSON);
+            _documentationStoreService.SetValue(webServiceName, freshJSON);
 
             // Return success status code
             return Ok();
