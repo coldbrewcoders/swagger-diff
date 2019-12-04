@@ -13,18 +13,18 @@ namespace SwaggerDiff.Services
         // Injected services
         private readonly ILogger _logger;
         private readonly IClientRequestService _clientRequestService;
-        private readonly IDocumentStoreService _documentStoreService;
+        private readonly IDocumentationStoreService _documentationStoreService;
 
         // All web-service names (must be unique)
         private readonly HashSet<string> WebServiceNames;
 
 
-        public InitializationService(IClientRequestService clientRequestService, IDocumentStoreService documentStoreService, ILogger<InitializationService> logger)
+        public InitializationService(IClientRequestService clientRequestService, IDocumentationStoreService documentationStoreService, ILogger<InitializationService> logger)
         {
             // Init Services
             _logger = logger;
             _clientRequestService = clientRequestService;
-            _documentStoreService = documentStoreService;
+            _documentationStoreService = documentationStoreService;
 
             // Get list of web-service names from env variable (service names must be unique)
             WebServiceNames = new HashSet<string>(Environment.GetEnvironmentVariable("SWAGGER_DIFF_SERVICENAMES").Split(","));
@@ -50,8 +50,8 @@ namespace SwaggerDiff.Services
                     // Make async request to get the Swagger documentation JSON for a web-service
                     string documentationJson = await _clientRequestService.FetchServiceSwaggerJsonAsync(webServiceName);
 
-                    // Add recieved documentation to thread-safe key-value store
-                    _documentStoreService.SetValue(webServiceName, documentationJson);
+                    // Add received documentation to thread-safe key-value store
+                    _documentationStoreService.SetValue(webServiceName, documentationJson);
 
                 }
                 catch (HttpRequestException error)
@@ -74,7 +74,7 @@ namespace SwaggerDiff.Services
                 if (!string.Equals(freshJSON, string.Empty))
                 {
                     // Put fresh API documentation JSON in document store
-                    _documentStoreService.SetValue(webServiceName, freshJSON);
+                    _documentationStoreService.SetValue(webServiceName, freshJSON);
                 }
             }
         }

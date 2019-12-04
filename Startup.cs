@@ -22,7 +22,7 @@ namespace SwaggerDiff
         public void ConfigureServices(IServiceCollection services)
         {
             // Inject service to store Swagger documentation JSON values in thread-safe way
-            services.AddSingleton<IDocumentStoreService, DocumentStoreService>();
+            services.AddSingleton<IDocumentationStoreService, DocumentationStoreService>();
 
             // Inject service to manage URLs for client requests
             services.AddSingleton<IUrlService, UrlService>();
