@@ -1,7 +1,12 @@
 const express = require("express");
 const path = require("path");
+const dotenv = require("dotenv");
 
-// Create express app
+
+// Configure env variables from root of project
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+// Create express app;
 let app = express();
 
 // Serve some simple json
@@ -19,9 +24,7 @@ app.get("/api/:serviceName/swagger/1/swagger.json", (req, res) => {
   res.sendFile(path.join(__dirname, `./test-json/${serviceName}_${sampleJsonNumber}.json`));
 });
 
+// Set port number from env
 const PORT = process.env.SWAGGER_DIFF_PORT;
 
-app.listen(PORT, () => {
-  console.log(`swagger-diff test server listening on ${PORT}`);
-});
-
+app.listen(PORT, () => console.log(`swagger-diff test server listening on ${PORT}`));
