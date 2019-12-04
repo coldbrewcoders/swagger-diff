@@ -20,6 +20,9 @@ Extras:
 Docker:
 * Figure out what the unknown docker params in the commented section of docker file mean
 
+* Create CBC Docker Hub Account
+* Add container to CBC Docker Hub account
+
 // Build container
 docker build --tag swaggerdiff .
 
