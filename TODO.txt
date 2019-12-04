@@ -16,3 +16,12 @@ Extras:
 * Allow for specific API version for each web-service
 * Write unit tests for services (figure out framework and strategy)
 
+
+Docker:
+* Fix runtime issue when running docker container
+
+// Build container
+docker build --tag swaggerdiff .
+
+// Run container
+docker run -p 8000:80 --env-file .env swaggerdiff
