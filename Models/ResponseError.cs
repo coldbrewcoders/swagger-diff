@@ -1,10 +1,9 @@
-
 namespace SwaggerDiff.Models
 {
     class ErrorObject
     {
-        public readonly string ErrorMessage;
-        public readonly string ErrorCode;
+        private readonly string ErrorMessage;
+        private readonly string ErrorCode;
         
         public ErrorObject(string errorCode, string errorMessage)
         {

@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SwaggerDiff.Models;
 using SwaggerDiff.Services.Interfaces;
+
+// Models
+using SwaggerDiff.Models;
 
 
 namespace SwaggerDiff.Controllers
@@ -11,7 +13,6 @@ namespace SwaggerDiff.Controllers
     [ApiController]
     public class SwaggerDiffController : ControllerBase
     {
-        // Injected services
         private readonly ILogger _logger;
         private readonly IInitializationService _initializationService;
         private readonly IClientRequestService _clientRequestService;
@@ -45,7 +46,7 @@ namespace SwaggerDiff.Controllers
             }
 
             // Get currently stored serialized JSON document for web-service (keyed on service name)
-            string previousJSON = _documentationStoreService.GetValue(webServiceName);
+            string previousJSON = _documentationStoreService[webServiceName];
 
             // If no previous JSON document found, re-attempt to fetch the web service documentation
             if (string.Equals(string.Empty, previousJSON))
@@ -84,7 +85,7 @@ namespace SwaggerDiff.Controllers
             await _compareService.CheckServiceForApiChanges(webServiceName, previousJSON, freshJSON);
 
             // Update document store with newest version of documentation for this web-service
-            _documentationStoreService.SetValue(webServiceName, freshJSON);
+            _documentationStoreService[webServiceName] = freshJSON;
 
             // Return success status code
             return Ok();

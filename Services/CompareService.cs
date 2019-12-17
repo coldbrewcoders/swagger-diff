@@ -1,10 +1,12 @@
-using System.Text;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using System.Collections.Generic;
+
+// Models and Service Interfaces
 using SwaggerDiff.Models;
 using SwaggerDiff.Services.Interfaces;
 
@@ -24,16 +26,17 @@ namespace SwaggerDiff.Services
 {
     public class CompareService : ICompareService
     {
-        // Injected services
         private readonly IClientRequestService _clientRequestService;
 
 
+        // Constructor
         public CompareService(IClientRequestService clientRequestService) 
         {
             _clientRequestService = clientRequestService;
         }
 
 
+        // Public methods
         public async Task CheckServiceForApiChanges(string webServiceName, string previousApiDocumentJSON, string freshApiDocumentJSON)
         {
             // Convert serialized JSON swagger definition into instances of OpenApiDocuments
@@ -60,6 +63,7 @@ namespace SwaggerDiff.Services
         }
 
 
+        // Private methods
         private OpenApiDocument GetDeserializedJsonAsOpenApiDocument(string str)
         {
             // Convert string to byte array
@@ -73,7 +77,8 @@ namespace SwaggerDiff.Services
         }
 
 
-        /** API document comparison checks **/
+        /*** API document comparison checks ***/
+
         private void CheckForApiRouteAndHttpMethodAdditions(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)
         {
             // Get information for all routes in previous API documentation
@@ -146,9 +151,6 @@ namespace SwaggerDiff.Services
                     }
                 }
             }
-
-            // FIXME: Figure out how to not use this hack
-            //await Task.Delay(1); 
         }
 
         private void CheckForApiRouteAndHttpMethodRemovals(OpenApiDocument previousApiDocument, OpenApiDocument freshApiDocument, DiffReport diffReport)

@@ -1,4 +1,6 @@
 using System;
+
+// Service Interfaces
 using SwaggerDiff.Services.Interfaces;
 
 
@@ -10,11 +12,10 @@ namespace SwaggerDiff.Services
         private readonly string _port;
         private readonly string _hostname;
         private readonly string _apiVersion;
-
-        // Slack webhook url
         private readonly string _slackWebhookUrl;
 
 
+        // Constructor
         public UrlService() 
         {
             // Get hostname of swagger documentation URLs from environment variable
@@ -31,6 +32,8 @@ namespace SwaggerDiff.Services
             _slackWebhookUrl = Environment.GetEnvironmentVariable("SWAGGER_DIFF_SLACK_WEBHOOK");
         }
 
+
+        // Public methods
         public string GetSwaggerDocumentUrl(string serviceName)
         {
             return $"{_hostname}:{_port}/api/{serviceName}/swagger/{_apiVersion}/swagger.json";

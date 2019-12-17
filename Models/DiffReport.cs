@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+
+// Models
 using Microsoft.OpenApi.Models;
 
 
@@ -19,12 +21,14 @@ namespace SwaggerDiff.Models
         private Dictionary<string, List<OperationType>> RemovedRoutesAndHttpMethods = new Dictionary<string, List<OperationType>>();
 
 
+        // Constructor
         public DiffReport(string webServiceName)
         {
             WebServiceName = webServiceName;
         }
 
 
+        // Public Methods
         public void RecordAddedRouteInformation(string route, OperationType httpMethod)
         {
             // Check if route already exist as key..
@@ -85,13 +89,14 @@ namespace SwaggerDiff.Models
         }
         
 
+        // Private Methods
         private string HttpMethodsEnumToString(OperationType httpMethod)
         {
             // Convert OpenApi.Models.OperationType enum to uppercase string
             return httpMethod.ToString().ToUpper();
         }
 
-        public int NumberOfRouteChanges()
+        private int NumberOfRouteChanges()
         {
             // Total number of route changes (Added and Removed)
             return NewRoutesAndHttpMethods.Keys.Count + RemovedRoutesAndHttpMethods.Keys.Count;

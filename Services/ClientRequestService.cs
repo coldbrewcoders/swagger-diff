@@ -1,9 +1,11 @@
 using System;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+
+// Service Interfaces
 using SwaggerDiff.Services.Interfaces;
 
 
@@ -19,6 +21,7 @@ namespace SwaggerDiff.Services
         private readonly ILogger _logger;
 
 
+        // Constructor
         public ClientRequestService(ILogger<IClientRequestService> logger, IUrlService urlService) 
         {
             _urlService = urlService;
@@ -26,6 +29,7 @@ namespace SwaggerDiff.Services
         }
 
 
+        // Public Methods
         public async Task<string> FetchServiceSwaggerJsonAsync(string webServiceName)
         {
             try 

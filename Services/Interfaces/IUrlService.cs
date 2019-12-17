@@ -1,4 +1,3 @@
-
 namespace SwaggerDiff.Services.Interfaces
 {
     public interface IUrlService
