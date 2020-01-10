@@ -33,16 +33,13 @@ namespace SwaggerDiff.Controllers
         // (GET | POST): api/swaggerdiff/:webServiceName (Exposed Webhook)
         [HttpGet("{webServiceName}")]
         [HttpPost("{webServiceName}")]
-        public async Task<ActionResult> GetSwaggerItem(string webServiceName)
+        public async Task<IActionResult> GetSwaggerItem(string webServiceName)
         {
             // Check if webhook was called with valid web-service name
             if (!_initializationService.IsValidWebServiceName(webServiceName))
             {
-                // Create error response object
-                ErrorObject errorObject = new ErrorObject("invalid_service_name", $"Web-Service name is not valid. Passed name: {webServiceName}.");
-
-                // Return 400 response status with 
-                return BadRequest(errorObject);
+                // Return 400 response status
+                return BadRequest($"Web-Service name is not valid. Passed name: '{webServiceName}'.");
             }
 
             // Get currently stored serialized JSON document for web-service (keyed on service name)
@@ -52,13 +49,18 @@ namespace SwaggerDiff.Controllers
             if (string.Equals(string.Empty, previousJSON))
             {
                 // Reattempt to load Swagger documentation for this web-service (previous request must have failed)
-                await _initializationService.ReattemptDocumentFetch(webServiceName);
+                bool isSuccessful = await _initializationService.ReattemptDocumentFetch(webServiceName);
 
-                // Create error response object
-                ErrorObject errorObject = new ErrorObject("no_previous_json", $"No stored API documentation for web-service: {webServiceName}.");
-
-                // Return 400 response status with 
-                return BadRequest(errorObject);
+                if (isSuccessful)
+                {
+                    // No previous documentation to compare with, return 200
+                    _logger.LogInformation($"Successful loaded API documentation for web-service '{webServiceName}', but there is no previous document to compare it with.");
+                    return Ok();
+                }
+                else {
+                    // Return 400 response status with 
+                    return BadRequest($"An error occurred while fetching new API documentation for web-service: '{webServiceName}'.");
+                }
             }
 
             // Attempt to get fresh JSON via client API request
@@ -67,11 +69,8 @@ namespace SwaggerDiff.Controllers
             // Verify that we were able to fetch fresh API documentation for web-service
             if (string.Equals(string.Empty, freshJSON))
             {
-                // Create error response object
-                ErrorObject errorObject = new ErrorObject("no_fresh_json", $"An error occurred while fetching new API documentation for web-service: {webServiceName}.");
-
                 // Return 400 response status with 
-                return BadRequest(errorObject);
+                return BadRequest($"An error occurred while fetching new API documentation for web-service: '{webServiceName}'.");
             }
 
             // If documents are identical, short-circuit and do not perform diff checks

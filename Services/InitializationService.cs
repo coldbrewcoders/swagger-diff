@@ -67,7 +67,7 @@ namespace SwaggerDiff.Services
             return WebServiceNames.Contains(webServiceName);
         }
 
-        public async Task ReattemptDocumentFetch(string webServiceName)
+        public async Task<bool> ReattemptDocumentFetch(string webServiceName)
         {
             if (IsValidWebServiceName(webServiceName))
             {
@@ -79,8 +79,14 @@ namespace SwaggerDiff.Services
                 {
                     // Put fresh API documentation JSON in document store
                     _documentationStoreService[webServiceName] = freshJSON;
+
+                    // Successful reattempt to fetch previously unavailable JSON document
+                    return true;
                 }
             }
+
+            // Unsuccessful reattempt
+            return false;
         }
     }
 }

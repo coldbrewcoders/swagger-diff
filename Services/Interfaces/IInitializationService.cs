@@ -6,6 +6,6 @@ namespace SwaggerDiff.Services.Interfaces
     {
         void Initialize();
         bool IsValidWebServiceName(string serviceName);
-        Task ReattemptDocumentFetch(string webServiceName);
+        Task<bool> ReattemptDocumentFetch(string webServiceName);
     }
 }
